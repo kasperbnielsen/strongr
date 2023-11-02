@@ -1,0 +1,11 @@
+{
+  "expo": {
+    "name": "strongr",
+    "plugins": ["expo-router"],
+    "scheme": "strongr",
+    "slug": "strongr",
+    "web": {
+      "bundler": "metro"
+    }
+  }
+}
