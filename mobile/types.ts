@@ -16,16 +16,6 @@ export type ExerciseEntity = {
   exercise_type: ExerciseType;
 };
 
-export type WorkoutEntityExerciseSetWeight = {
-  weight?: number;
-  reps: number;
-};
-
-export type WorkoutEntityExerciseSetTime = {
-  // Time in seconds
-  time: number;
-};
-
 export enum SetType {
   Default = 0,
   WarmUp = 1,
@@ -33,15 +23,15 @@ export enum SetType {
   Failure = 3,
 }
 
-export type WorkoutEntityExerciseBaseSet = {
+export type WorkoutEntityExerciseSet = {
+  finished: boolean;
   set_type: SetType;
-};
 
-export type WorkoutEntityExerciseSet = (
-  | WorkoutEntityExerciseSetTime
-  | WorkoutEntityExerciseSetWeight
-) &
-  WorkoutEntityExerciseBaseSet;
+  weight: number;
+  reps: number;
+  // Time in seconds
+  time: number;
+};
 
 export type WorkoutEntityExercise = {
   exercise_id: string;

@@ -1,5 +1,13 @@
-import { Text } from "react-native";
+import { View, Text } from 'react-native';
+
+import WorkoutModal from '../components/workout/WorkoutModal';
 
 export default function HomePage() {
-  return <Text>Home Page</Text>;
+  return (
+    <View>
+      <Text>HomePage</Text>
+
+      <WorkoutModal />
+    </View>
+  );
 }

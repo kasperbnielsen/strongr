@@ -1,4 +1,9 @@
 {
   "root": true,
-  "extends": ["universe/native"]
+  "extends": ["universe/native"],
+  "rules": {
+    "no-useless-concat": "error",
+    "prefer-template": "error",
+    "arrow-body-style": ["error", "as-needed"]
+  }
 }
