@@ -1,0 +1,8 @@
+POST http://localhost:3000/exercises
+content-type:application/json
+
+{
+    "title": "Squad",
+    "description":"",
+    "exercise_type": 0
+}

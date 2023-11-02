@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { ObjectId } from 'mongodb';
 
 import { getCollection } from '../database';
+import { ExerciseType } from '../types';
 
 export const router = Router();
 
@@ -44,7 +45,7 @@ router.post('/workouts', async (req, res) => {
     return;
   }
 
-  const { exercises } = req?.body?.exercises;
+  const exercises = req?.body?.exercises;
 
   if (!Array.isArray(exercises) || !exercises?.length) {
     res.status(400).send({ error: 'Invalid exercises input' });
@@ -93,4 +94,38 @@ router.get('/users/:user_id/workouts', async (req, res) => {
     .toArray();
 
   res.status(200).send(workouts);
+});
+
+router.get('/exercises', async (_req, res) => {
+  const exerciseCollection = await getCollection('exercises');
+
+  const exercises = await exerciseCollection.find().sort({ title: 1 }).toArray();
+
+  res.status(200).send(exercises);
+});
+
+router.post('/exercises', async (req, res) => {
+  const title = req?.body?.title?.trim();
+
+  if (!title?.length || typeof title !== 'string') {
+    res.status(400).send({ error: 'Invalid title input' });
+    return;
+  }
+
+  const exerciseType = req?.body?.exercise_type;
+
+  if (typeof exerciseType !== 'number' || !Object.values(ExerciseType).includes(exerciseType)) {
+    res.status(400).send({ error: 'Invalid exercise_type input ' });
+    return;
+  }
+
+  const exerciseCollection = await getCollection('exercises');
+
+  const insertResult = exerciseCollection.insertOne({
+    title,
+    description: req?.body?.description?.trim() || '',
+    exercise_type: exerciseType,
+  });
+
+  res.status(201).send(insertResult);
 });

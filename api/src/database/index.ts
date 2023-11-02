@@ -14,17 +14,11 @@ const databaseClient = new MongoClient(DATABASE_URI);
 
 const databaseConnection = databaseClient.connect();
 
-export async function getCollection(
-  collectionName: 'users',
-): Promise<Collection<UserEntity>>;
+export async function getCollection(collectionName: 'users'): Promise<Collection<UserEntity>>;
 
-export async function getCollection(
-  collectionName: 'workouts',
-): Promise<Collection<WorkoutEntity>>;
+export async function getCollection(collectionName: 'workouts'): Promise<Collection<WorkoutEntity>>;
 
-export async function getCollection(
-  collectionName: 'exercises',
-): Promise<Collection<ExerciseEntity>>;
+export async function getCollection(collectionName: 'exercises'): Promise<Collection<ExerciseEntity>>;
 
 export async function getCollection(collectionName: string) {
   const conn = await databaseConnection;

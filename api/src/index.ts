@@ -27,6 +27,4 @@ app.use(headerMiddleware);
 
 app.use([router]);
 
-app.listen(process.env.PORT ?? 3000, () =>
-  console.info('live on ::[' + (process.env.PORT ?? 3000) + ']'),
-);
+app.listen(process.env.PORT ?? 3000, () => console.info('live on ::[' + (process.env.PORT ?? 3000) + ']'));
