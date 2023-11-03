@@ -1,0 +1,8 @@
+POST http://localhost:3000/workouts
+content-type:application/json
+authorization: Bearer {{$authToken}}
+
+{
+    "title": "Dummy Workout"
+    "user_id": {{$userId}}
+}

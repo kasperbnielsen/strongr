@@ -1,0 +1,11 @@
+[package]
+name = "api"
+version = "0.0.1"
+edition = "2021"
+
+[dependencies]
+axum = "0.6.20"
+dotenv = "0.15.0"
+mongodb = "2.7.1"
+serde = { version = "1.0.190", features = ["derive"] }
+tokio = { version = "1.33.0", features = ["full"] }
