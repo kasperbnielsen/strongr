@@ -1,0 +1,7 @@
+PUT http://localhost:3000/users/654ff20cf9519cb6ea299249
+content-type:application/json
+
+{
+    "first_name": "Houge",
+    "last_name": "Madsen"
+}
