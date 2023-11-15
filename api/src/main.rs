@@ -23,7 +23,7 @@ pub async fn index() -> String {
 #[tokio::main]
 async fn main() {
     let database = setup_database_client().await.unwrap();
-    let layer: CorsLayer = CorsLayer::new().allow_origin(Any).allow_headers(Any)
+    let layer: CorsLayer = CorsLayer::new().allow_origin(Any).allow_headers(Any);
 
     let app = axum::Router::new()
         .route("/", get(index))

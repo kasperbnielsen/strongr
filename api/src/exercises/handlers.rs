@@ -2,36 +2,29 @@ use std::str::FromStr;
 
 use axum::{
     extract::{Path, State},
-    http::{
-        header::{self, HeaderMap},
-        StatusCode,
-    },
+    http::StatusCode,
     response::IntoResponse,
     Json,
 };
 use futures::StreamExt;
 use mongodb::bson::{doc, oid::ObjectId};
 
-use crate::error::{self, ApiError};
+use crate::error::ApiError;
 
 use super::models::{
-    CreateExerciseInput, ExerciseModel, ExerciseModelWithoutId, ExerciseOutput, UpdateExerciseInput,
+    CreateExerciseInput, ExerciseModel, ExerciseModelWithoutId, ExerciseOutput, ExerciseOutputList,
+    UpdateExerciseInput,
 };
 pub fn get_collection<T>(database: mongodb::Client) -> mongodb::Collection<T> {
     database.database("strongr").collection::<T>("exercises")
 }
 
-pub async fn get_exercises(State(database): State<mongodb::Client>) -> impl IntoResponse {
+pub async fn get_exercises(
+    State(database): State<mongodb::Client>,
+) -> Result<ExerciseOutputList, ApiError> {
     let collection: mongodb::Collection<ExerciseModel> = get_collection(database);
 
-    let mut header_map = HeaderMap::new();
-
-    header_map.insert(header::ACCESS_CONTROL_ALLOW_ORIGIN, "*".parse().unwrap());
-
-    let mut cursor = collection
-        .find(doc! {}, None)
-        .await
-        .expect("Could not find exercises");
+    let mut cursor = collection.find(doc! {}, None).await?;
 
     let mut rows: Vec<ExerciseOutput> = Vec::new();
 
@@ -39,13 +32,15 @@ pub async fn get_exercises(State(database): State<mongodb::Client>) -> impl Into
         rows.push(doc.into());
     }
 
-    (StatusCode::OK, header_map, Json(rows))
+    let result = ExerciseOutputList { list: rows };
+
+    Ok(result)
 }
 
 pub async fn create_exercise(
     State(database): State<mongodb::Client>,
     Json(payload): Json<CreateExerciseInput>,
-) -> impl IntoResponse {
+) -> Result<StatusCode, ApiError> {
     let collection = get_collection(database);
 
     let exercise = ExerciseModelWithoutId {
@@ -54,28 +49,25 @@ pub async fn create_exercise(
         exercise_type: payload.exercise_type,
     };
 
-    if let Err(_err) = collection.insert_one(exercise, None).await {
-        eprintln!("Couldnt insert exercise");
-        return StatusCode::NOT_FOUND;
-    }
+    collection.insert_one(exercise, None).await?;
 
-    StatusCode::OK
+    Ok(StatusCode::OK)
 }
 
 pub async fn get_exercise_by_id(
     State(database): State<mongodb::Client>,
     exercise_id: Path<String>,
-) -> Result<ExerciseModel, ApiError> {
+) -> Result<ExerciseOutput, ApiError> {
     let collection: mongodb::Collection<ExerciseModel> = get_collection(database);
 
     let result = collection
         .find_one(
-            doc! {"_id": ObjectId::from_str(&exercise_id.to_string()).unwrap()},
+            doc! {"_id": ObjectId::from_str(&exercise_id.to_string())?},
             None,
         )
         .await?;
 
-    Ok(result.unwrap())
+    Ok(result.unwrap().into())
 }
 
 pub async fn update_exercise_by_id(

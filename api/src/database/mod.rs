@@ -1,4 +1,4 @@
-use dotenv::dotenv;
+
 use mongodb::options::ClientOptions;
 
 pub async fn setup_database_client() -> Result<mongodb::Client, mongodb::error::Error> {

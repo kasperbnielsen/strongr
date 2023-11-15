@@ -5,6 +5,7 @@ use axum::{http::StatusCode, response::IntoResponse, response::Response};
 pub enum ApiError {
     InvalidObjectId(mongodb::bson::oid::Error),
     MongoError(mongodb::error::Error),
+    DateTimeError(mongodb::bson::datetime::Error),
 }
 
 pub const TEXT_RED: &str = "\x1B[31m";
@@ -18,6 +19,7 @@ impl std::fmt::Display for ApiError {
                 write!(f, "{TEXT_RED}{err}{TEXT_RESET}")
             }
             ApiError::MongoError(err) => err.fmt(f),
+            ApiError::DateTimeError(err) => err.fmt(f),
         }
     }
 }
@@ -37,12 +39,17 @@ impl From<mongodb::error::Error> for ApiError {
 impl IntoResponse for ApiError {
     fn into_response(self) -> axum::response::Response {
         match self {
-            ApiError::InvalidObjectId(err) => {
+            ApiError::InvalidObjectId(_err) => {
                 let mut response = Response::default();
                 *response.status_mut() = StatusCode::BAD_REQUEST;
                 response
             }
-            ApiError::MongoError(err) => {
+            ApiError::MongoError(_err) => {
+                let mut response = Response::default();
+                *response.status_mut() = StatusCode::BAD_REQUEST;
+                response
+            }
+            ApiError::DateTimeError(_err) => {
                 let mut response = Response::default();
                 *response.status_mut() = StatusCode::BAD_REQUEST;
                 response

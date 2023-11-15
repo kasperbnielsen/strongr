@@ -1,0 +1,17 @@
+POST http://localhost:3000/workouts
+content-type:application/json
+
+{
+  "user_id": "ObjectId('123456789012')",
+  "title": "123",
+  "note": "sup 123",
+  "exercises": [
+    {
+      "exercise_id": "123456789012111222333444",
+      "note": "123",
+      "sets": [{ "set_type": "Default", "weight": 1, "reps": 1, "time": 1 }]
+    }
+  ],
+  "started_at": "2023-11-14 21:29:26.898",
+  "finished_at": 2012-04-23T18:25:43.511Z
+}

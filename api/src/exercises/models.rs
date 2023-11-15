@@ -1,3 +1,4 @@
+use axum::response::{IntoResponse, Response};
 use mongodb::bson::oid::ObjectId;
 
 #[derive(serde::Deserialize, serde::Serialize, Debug)]
@@ -12,6 +13,22 @@ pub struct ExerciseModel {
     pub title: String,
     pub description: String,
     pub exercise_type: ExerciseType,
+}
+
+impl IntoResponse for ExerciseOutput {
+    fn into_response(self) -> axum::response::Response {
+        axum::Json(self).into_response()
+    }
+}
+
+pub struct ExerciseOutputList {
+    pub list: Vec<ExerciseOutput>,
+}
+
+impl IntoResponse for ExerciseOutputList {
+    fn into_response(self) -> axum::response::Response {
+        axum::Json(self.list).into_response()
+    }
 }
 
 #[derive(serde::Deserialize, serde::Serialize, Debug)]
