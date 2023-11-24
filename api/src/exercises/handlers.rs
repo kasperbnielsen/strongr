@@ -3,11 +3,13 @@ use std::str::FromStr;
 use axum::{
     extract::{Path, State},
     http::StatusCode,
-    response::IntoResponse,
     Json,
 };
 use futures::StreamExt;
-use mongodb::bson::{doc, oid::ObjectId};
+use mongodb::{
+    bson::{doc, oid::ObjectId},
+    results::InsertOneResult,
+};
 
 use crate::error::ApiError;
 
@@ -37,6 +39,29 @@ pub async fn get_exercises(
     Ok(result)
 }
 
+pub async fn create_exercise_for_user(
+    State(database): State<mongodb::Client>,
+    user_id: Path<String>,
+    Json(payload): Json<CreateExerciseInput>,
+) -> Result<(StatusCode, Json<InsertOneResult>), ApiError> {
+    let collection = get_collection(database);
+
+    const HARDCODED_USER: &str = "6544111bdae4c520a44a8bdb";
+
+    let exercise = ExerciseModelWithoutId {
+        title: payload.title,
+        description: payload.description,
+        exercise_type: payload.exercise_type,
+        user_id: Some(ObjectId::from_str(&user_id)?),
+    };
+
+    collection
+        .insert_one(exercise, None)
+        .await
+        .map(|value| (StatusCode::CREATED, axum::Json(value)))
+        .map_err(ApiError::from)
+}
+
 pub async fn create_exercise(
     State(database): State<mongodb::Client>,
     Json(payload): Json<CreateExerciseInput>,
@@ -47,6 +72,7 @@ pub async fn create_exercise(
         title: payload.title,
         description: payload.description,
         exercise_type: payload.exercise_type,
+        user_id: None,
     };
 
     collection.insert_one(exercise, None).await?;

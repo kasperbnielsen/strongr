@@ -2,7 +2,73 @@ POST http://localhost:3000/exercises
 content-type:application/json
 
 {
-  "title": "Dummy Workout",
-  "description": "dummy description",
+  "title": "Bicep Curl",
+  "description": "Bicep Curl",
   "exercise_type": "Time"
+}
+
+###
+
+POST http://localhost:3000/exercises
+content-type:application/json
+
+{
+  "title": "Running",
+  "description": "Running",
+  "exercise_type": "Time"
+}
+
+###
+
+POST http://localhost:3000/exercises
+content-type:application/json
+
+{
+  "title": "Leg Extension",
+  "description": "Leg Extension",
+  "exercise_type": "Weight"
+}
+
+###
+
+POST http://localhost:3000/exercises
+content-type:application/json
+
+{
+  "title": "Pull up",
+  "description": "Pull up",
+  "exercise_type": "Weight"
+}
+
+###
+
+POST http://localhost:3000/exercises
+content-type:application/json
+
+{
+  "title": "Bench press",
+  "description": "Bench press",
+  "exercise_type": "Weight"
+}
+
+###
+
+POST http://localhost:3000/exercises
+content-type:application/json
+
+{
+  "title": "Squat",
+  "description": "Squat",
+  "exercise_type": "Weight"
+}
+
+###
+
+POST http://localhost:3000/exercises
+content-type:application/json
+
+{
+  "title": "Deadlift",
+  "description": "Deadlift",
+  "exercise_type": "Weight"
 }

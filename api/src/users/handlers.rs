@@ -1,4 +1,4 @@
-use axum_login::{AuthnBackend, UserId};
+
 use std::str::FromStr;
 
 use axum::{
@@ -7,7 +7,7 @@ use axum::{
     Json,
 };
 use mongodb::{
-    bson::{doc, DateTime},
+    bson::{doc},
     Collection,
 };
 
@@ -27,12 +27,12 @@ pub async fn get_user_by_id(
 
     let result = collection
         .find_one(
-            doc! {"_id": mongodb::bson::oid::ObjectId::from_str(&user_id.to_string()).unwrap()},
+            doc! {"_id": mongodb::bson::oid::ObjectId::from_str(user_id.as_str())?},
             None,
         )
         .await?;
 
-    Ok(result.unwrap().into())
+    result.map_or(Err(ApiError::ResourceNotFound), |x| Ok(x.into()))
 }
 
 pub async fn create_user(

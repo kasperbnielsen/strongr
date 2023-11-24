@@ -8,7 +8,7 @@ import WorkoutTitleInput from './WorkoutTitleInput';
 import { HARDCODED_USER_ID } from '../../dummy';
 import { getExercises } from '../../endpoints/exercises';
 import { createWorkout } from '../../endpoints/workouts';
-import { ExerciseEntity, SetType, WorkoutEntity, WorkoutEntityExercise, WorkoutEntityExerciseSet } from '../../types';
+import { ExerciseModel, SetType, WorkoutModel, WorkoutModelExercise, WorkoutModelExerciseSet } from '../../types';
 import ExerciseInputModal from '../exercise/ExerciseInputModal';
 
 function generateWorkoutTitle() {
@@ -23,7 +23,7 @@ function generateWorkoutTitle() {
 
 export default function WorkoutModal() {
   // TODO: move to global state
-  const [exercises, setExercises] = useState<ExerciseEntity[]>([]);
+  const [exercises, setExercises] = useState<ExerciseModel[]>([]);
 
   const [title, setTitle] = useState(generateWorkoutTitle());
 
@@ -31,7 +31,7 @@ export default function WorkoutModal() {
 
   const [startedAt] = useState(new Date());
 
-  const [workoutExercises, setWorkoutExercises] = useState<WorkoutEntity['exercises']>([]);
+  const [workoutExercises, setWorkoutExercises] = useState<WorkoutModel['exercises']>([]);
 
   useEffect(() => {
     getExercises().then(setExercises);
@@ -59,14 +59,14 @@ export default function WorkoutModal() {
     setWorkoutExercises(clone);
   }
 
-  function updateExercise(index: number, e: WorkoutEntityExercise) {
+  function updateExercise(index: number, e: WorkoutModelExercise) {
     const clone = workoutExercises.slice();
     clone.splice(index, 1, e);
     setWorkoutExercises(clone);
   }
 
-  function addExercise(exercise: ExerciseEntity) {
-    const set: WorkoutEntityExerciseSet = { set_type: SetType.Default, time: 0, finished: false, weight: 0, reps: 0 };
+  function addExercise(exercise: ExerciseModel) {
+    const set: WorkoutModelExerciseSet = { set_type: SetType.DropSet, time: 0, weight: 0, reps: 0 };
 
     setWorkoutExercises([
       ...workoutExercises,

@@ -1,8 +1,8 @@
 use axum::response::IntoResponse;
-use axum_login::tower_sessions::cookie::time::{Date, UtcOffset};
-use chrono::{DateTime, Utc};
-use mongodb::bson::oid::ObjectId;
+use mongodb::bson::{self, doc, oid::ObjectId, serde_helpers::hex_string_as_object_id, Bson};
+use typeshare::typeshare;
 
+#[typeshare]
 #[derive(serde::Deserialize, serde::Serialize, Debug)]
 pub enum SetType {
     Default = 0,
@@ -10,7 +10,7 @@ pub enum SetType {
     DropSet = 2,
     Failure = 3,
 }
-
+#[typeshare]
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
 pub struct WorkoutModelExerciseSet {
     pub set_type: SetType,
@@ -19,18 +19,21 @@ pub struct WorkoutModelExerciseSet {
     // Time in seconds
     pub time: u32,
 }
-
+#[typeshare]
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
 pub struct WorkoutModelExercise {
-    pub exercise_id: ObjectId,
+    #[serde(with = "hex_string_as_object_id")]
+    pub exercise_id: String,
     pub note: String,
     pub sets: Vec<WorkoutModelExerciseSet>,
 }
-
+#[typeshare]
 #[derive(serde::Serialize, serde::Deserialize)]
 pub struct WorkoutModel {
-    pub _id: ObjectId,
-    pub user_id: ObjectId,
+    #[serde(with = "hex_string_as_object_id")]
+    pub _id: String,
+    #[serde(with = "hex_string_as_object_id")]
+    pub user_id: String,
     pub title: String,
     pub note: String,
     pub exercises: Vec<WorkoutModelExercise>,
@@ -58,17 +61,20 @@ pub struct WorkoutExerciseSetInput {
 
 #[derive(serde::Deserialize)]
 pub struct WorkoutExerciseInput {
+    #[serde(with = "hex_string_as_object_id")]
     pub exercise_id: String,
     pub note: String,
     pub sets: Vec<WorkoutExerciseSetInput>,
 }
 
-#[derive(serde::Deserialize, serde::Serialize)]
+#[derive(serde::Deserialize)]
 pub struct CreateWorkoutInput {
     pub title: String,
     pub note: String,
     pub exercises: Vec<WorkoutModelExercise>,
+    #[serde(with = "mongodb::bson::serde_helpers::bson_datetime_as_rfc3339_string")]
     pub started_at: mongodb::bson::DateTime,
+    #[serde(with = "mongodb::bson::serde_helpers::bson_datetime_as_rfc3339_string")]
     pub finished_at: mongodb::bson::DateTime,
 }
 
@@ -77,7 +83,9 @@ pub struct UpdateWorkoutInput {
     pub title: String,
     pub note: String,
     pub exercises: Vec<WorkoutExerciseInput>,
+    #[serde(with = "mongodb::bson::serde_helpers::bson_datetime_as_rfc3339_string")]
     pub started_at: mongodb::bson::DateTime,
+    #[serde(with = "mongodb::bson::serde_helpers::bson_datetime_as_rfc3339_string")]
     pub finished_at: mongodb::bson::DateTime,
 }
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
@@ -92,34 +100,19 @@ pub struct WorkoutOutput {
 }
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
 pub struct WorkoutOutputWithoutId {
-    pub user_id: String,
+    pub user_id: ObjectId,
     pub title: String,
     pub note: String,
     pub exercises: Vec<WorkoutModelExercise>,
-    #[serde(with = "bson::serde_helpers::chrono_datetime_as_bson_datetime")]
-    pub started_at: DateTime<Utc>,
-    #[serde(with = "bson::serde_helpers::chrono_datetime_as_bson_datetime")]
-    pub finished_at: DateTime<Utc>,
-}
-
-impl From<WorkoutOutput> for WorkoutOutputWithoutId {
-    fn from(value: WorkoutOutput) -> Self {
-        Self {
-            user_id: value.user_id,
-            title: value.title,
-            note: value.note,
-            exercises: value.exercises,
-            started_at: value.started_at.to_chrono(),
-            finished_at: value.finished_at.to_chrono(),
-        }
-    }
+    pub started_at: mongodb::bson::DateTime,
+    pub finished_at: mongodb::bson::DateTime,
 }
 
 impl From<WorkoutModel> for WorkoutOutput {
     fn from(value: WorkoutModel) -> Self {
         Self {
-            _id: value._id.to_hex(),
-            user_id: value.user_id.to_hex(),
+            _id: value._id,
+            user_id: value.user_id,
             title: value.title,
             note: value.note,
             exercises: value.exercises,
@@ -153,9 +146,9 @@ impl From<WorkoutModelExercise> for WorkoutExerciseInput {
             sets.push(set.into());
         }
         Self {
-            exercise_id: value.exercise_id.to_hex(),
+            exercise_id: value.exercise_id,
             note: value.note,
-            sets: sets,
+            sets,
         }
     }
 }

@@ -1,8 +1,7 @@
-POST http://localhost:3000/workouts
+PUT http://localhost:3000/workouts/655a1372a19229cee0b4cde3
 content-type:application/json
 
 {
-  "user_id": "ObjectId('123456789012')",
   "title": "123",
   "note": "sup 123",
   "exercises": [

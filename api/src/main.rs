@@ -1,7 +1,11 @@
-use axum::routing::{get, post};
+use axum::{
+    extract::State,
+    routing::{get, post, put},
+};
 use database::setup_database_client;
 use exercises::handlers::{
-    create_exercise, get_exercise_by_id, get_exercises, update_exercise_by_id,
+    create_exercise, create_exercise_for_user, get_exercise_by_id, get_exercises,
+    update_exercise_by_id,
 };
 use tower_http::cors::{Any, CorsLayer};
 use users::handlers::{create_user, get_user_by_id, update_user_by_id};
@@ -33,6 +37,7 @@ async fn main() {
             get(get_user_by_id).put(update_user_by_id),
         )
         .route("/exercises", get(get_exercises).post(create_exercise))
+        .route("/users/:user_id/exercises", post(create_exercise_for_user))
         .route(
             "/exercises/:exercise_id",
             get(get_exercise_by_id).put(update_exercise_by_id),

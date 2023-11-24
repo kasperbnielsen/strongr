@@ -1,15 +1,21 @@
-use axum::response::{IntoResponse, Response};
-use mongodb::bson::oid::ObjectId;
+use axum::response::IntoResponse;
+use mongodb::bson::{
+    oid::ObjectId,
+    serde_helpers::{self, hex_string_as_object_id},
+};
+use typeshare::typeshare;
 
+#[typeshare]
 #[derive(serde::Deserialize, serde::Serialize, Debug)]
 pub enum ExerciseType {
     Weight = 0,
     Time = 1,
 }
-
+#[typeshare]
 #[derive(serde::Deserialize, serde::Serialize, Debug)]
 pub struct ExerciseModel {
-    pub _id: ObjectId,
+    #[serde(with = "hex_string_as_object_id")]
+    pub _id: String,
     pub title: String,
     pub description: String,
     pub exercise_type: ExerciseType,
@@ -33,6 +39,7 @@ impl IntoResponse for ExerciseOutputList {
 
 #[derive(serde::Deserialize, serde::Serialize, Debug)]
 pub struct ExerciseOutput {
+    #[serde(with = "hex_string_as_object_id")]
     pub _id: String,
     pub title: String,
     pub description: String,
@@ -42,7 +49,7 @@ pub struct ExerciseOutput {
 impl From<ExerciseModel> for ExerciseOutput {
     fn from(value: ExerciseModel) -> Self {
         Self {
-            _id: value._id.to_hex(),
+            _id: value._id,
             title: value.title,
             description: value.description,
             exercise_type: value.exercise_type,
@@ -55,6 +62,7 @@ pub struct ExerciseModelWithoutId {
     pub title: String,
     pub description: String,
     pub exercise_type: ExerciseType,
+    pub user_id: Option<ObjectId>,
 }
 
 #[derive(serde::Deserialize)]

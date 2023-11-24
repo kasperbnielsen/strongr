@@ -5,7 +5,7 @@ use axum::{http::StatusCode, response::IntoResponse, response::Response};
 pub enum ApiError {
     InvalidObjectId(mongodb::bson::oid::Error),
     MongoError(mongodb::error::Error),
-    DateTimeError(mongodb::bson::datetime::Error),
+    ResourceNotFound,
 }
 
 pub const TEXT_RED: &str = "\x1B[31m";
@@ -19,7 +19,7 @@ impl std::fmt::Display for ApiError {
                 write!(f, "{TEXT_RED}{err}{TEXT_RESET}")
             }
             ApiError::MongoError(err) => err.fmt(f),
-            ApiError::DateTimeError(err) => err.fmt(f),
+            ApiError::ResourceNotFound => write!(f, "Resource not found"),
         }
     }
 }
@@ -39,19 +39,21 @@ impl From<mongodb::error::Error> for ApiError {
 impl IntoResponse for ApiError {
     fn into_response(self) -> axum::response::Response {
         match self {
-            ApiError::InvalidObjectId(_err) => {
+            ApiError::InvalidObjectId(err) => {
                 let mut response = Response::default();
-                *response.status_mut() = StatusCode::BAD_REQUEST;
+                *response.status_mut() = StatusCode::NOT_ACCEPTABLE;
+                eprintln!("{err}");
                 response
             }
-            ApiError::MongoError(_err) => {
+            ApiError::MongoError(err) => {
                 let mut response = Response::default();
                 *response.status_mut() = StatusCode::BAD_REQUEST;
+                eprintln!("{err}");
                 response
             }
-            ApiError::DateTimeError(_err) => {
+            ApiError::ResourceNotFound => {
                 let mut response = Response::default();
-                *response.status_mut() = StatusCode::BAD_REQUEST;
+                *response.status_mut() = StatusCode::NOT_FOUND;
                 response
             }
         }

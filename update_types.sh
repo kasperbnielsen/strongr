@@ -1,0 +1,1 @@
+typeshare ./api --lang=typescript --output-file=mobile/types.ts
