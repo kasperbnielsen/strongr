@@ -1,5 +1,3 @@
-
-
 use axum::response::IntoResponse;
 use mongodb::bson::oid::ObjectId;
 
@@ -14,12 +12,17 @@ pub struct UserModel {
 pub struct UserModelWithoutId {
     pub first_name: String,
     pub last_name: String,
+    pub email: String,
+    pub password: String,
+    pub token: String,
 }
 
 #[derive(serde::Deserialize)]
 pub struct UpdateUserInput {
     pub first_name: String,
     pub last_name: String,
+    pub email: String,
+    pub password: String,
 }
 
 #[derive(serde::Serialize, serde::Deserialize, Debug)]

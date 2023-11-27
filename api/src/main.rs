@@ -1,3 +1,4 @@
+use authentication::handlers::authenticate_credentials;
 use axum::{
     extract::State,
     routing::{get, post, put},
@@ -14,9 +15,11 @@ use workouts::handlers::{
     update_workout_by_id,
 };
 
+mod authentication;
 mod database;
 mod error;
 mod exercises;
+mod jwt;
 mod users;
 mod workouts;
 
@@ -50,6 +53,7 @@ async fn main() {
                 .delete(delete_workout_by_id),
         )
         .route("/users/:user_id/workouts", get(get_user_workouts))
+        .route("/auth", post(authenticate_credentials))
         .layer(layer);
 
     let app = app.with_state(database);

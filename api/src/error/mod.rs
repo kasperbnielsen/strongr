@@ -6,6 +6,7 @@ pub enum ApiError {
     InvalidObjectId(mongodb::bson::oid::Error),
     MongoError(mongodb::error::Error),
     ResourceNotFound,
+    Unauthorized(StatusCode),
 }
 
 pub const TEXT_RED: &str = "\x1B[31m";
@@ -20,6 +21,7 @@ impl std::fmt::Display for ApiError {
             }
             ApiError::MongoError(err) => err.fmt(f),
             ApiError::ResourceNotFound => write!(f, "Resource not found"),
+            ApiError::Unauthorized(err) => err.fmt(f),
         }
     }
 }
@@ -54,6 +56,11 @@ impl IntoResponse for ApiError {
             ApiError::ResourceNotFound => {
                 let mut response = Response::default();
                 *response.status_mut() = StatusCode::NOT_FOUND;
+                response
+            }
+            ApiError::Unauthorized(_) => {
+                let mut response = Response::default();
+                *response.status_mut() = StatusCode::UNAUTHORIZED;
                 response
             }
         }

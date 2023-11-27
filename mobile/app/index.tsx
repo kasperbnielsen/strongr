@@ -1,6 +1,5 @@
 import { View, Text } from 'react-native';
 
-import BottomNavBar from '../components/navbar/BottomNavBar';
 import WorkoutModal from '../components/workout/WorkoutModal';
 
 export default function HomePage() {

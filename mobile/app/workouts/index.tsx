@@ -4,10 +4,10 @@ import { Text, View } from 'react-native';
 import WorkoutList from '../../components/workout/WorkoutList';
 import { HARDCODED_USER_ID } from '../../dummy';
 import { getWorkouts } from '../../endpoints/workouts';
-import { WorkoutEntity } from '../../types';
+import { WorkoutModel } from '../../types';
 
 export default function WorkoutOverview() {
-  const [workouts, setWorkouts] = useState<WorkoutEntity[]>([]);
+  const [workouts, setWorkouts] = useState<WorkoutModel[]>([]);
 
   useEffect(() => {
     getWorkouts(HARDCODED_USER_ID).then(setWorkouts);

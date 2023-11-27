@@ -1,6 +1,6 @@
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { View, Pressable, Image, Text } from 'react-native';
+import { View, Image, Text } from 'react-native';
 
 export default function BottomNavBar() {
   const [state, setState] = useState([false, false, false, false, false]);

@@ -6,9 +6,11 @@ edition = "2021"
 [dependencies]
 axum = "0.6.20"
 axum-login = "0.7.3"
+bcrypt = "0.15.0"
 chrono = "0.4.31"
 dotenv = "0.15.0"
 futures = "0.3.29"
+jsonwebtoken = "9.1.0"
 mongodb = {version = "2.7.1", features = ["bson-chrono-0_4"]}
 serde = { version = "1.0.190", features = ["derive"] }
 tokio = { version = "1.33.0", features = ["full"] }

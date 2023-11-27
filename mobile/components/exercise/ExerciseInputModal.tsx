@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Button, FlatList, Modal, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
-import { ExerciseEntity } from '../../types';
+import { ExerciseModel } from '../../types';
 
 export default function ExerciseInputModal({
   visible,
@@ -11,9 +11,9 @@ export default function ExerciseInputModal({
   addExercise,
 }: {
   visible: boolean;
-  exercises: ExerciseEntity[];
+  exercises: ExerciseModel[];
   close: () => void;
-  addExercise: (exercise: ExerciseEntity) => void;
+  addExercise: (exercise: ExerciseModel) => void;
 }) {
   const [search, setSearch] = useState('');
 

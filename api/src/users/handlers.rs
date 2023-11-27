@@ -1,4 +1,3 @@
-
 use std::str::FromStr;
 
 use axum::{
@@ -6,12 +5,9 @@ use axum::{
     http::StatusCode,
     Json,
 };
-use mongodb::{
-    bson::{doc},
-    Collection,
-};
+use mongodb::{bson::doc, Collection};
 
-use crate::error::ApiError;
+use crate::{error::ApiError, jwt::logic::encode_token};
 
 use super::models::{UpdateUserInput, UserModel, UserModelOutput, UserModelWithoutId};
 
@@ -19,6 +15,13 @@ pub fn get_collection<T>(database: mongodb::Client) -> mongodb::Collection<T> {
     database.database("strongr").collection::<T>("users")
 }
 
+pub fn hash_password(password: String) -> Result<String, ApiError> {
+    bcrypt::hash(password, 10).map_err(|error| ApiError::ResourceNotFound)
+}
+
+pub fn verify_password(password: String, hash: &str) -> Result<bool, ApiError> {
+    bcrypt::verify(password, hash).map_err(|error| ApiError::ResourceNotFound)
+}
 pub async fn get_user_by_id(
     State(database): State<mongodb::Client>,
     user_id: Path<String>,
@@ -46,6 +49,9 @@ pub async fn create_user(
             UserModelWithoutId {
                 first_name: payload.first_name,
                 last_name: payload.last_name,
+                token: encode_token().unwrap(),
+                email: payload.email,
+                password: payload.password,
             },
             None,
         )

@@ -1,8 +1,8 @@
 import { Text, View } from 'react-native';
 
-import { WorkoutEntity } from '../../types';
+import { WorkoutModel } from '../../types';
 
-export default function WorkoutListItem({ workout }: { workout: WorkoutEntity }) {
+export default function WorkoutListItem({ workout }: { workout: WorkoutModel }) {
   return (
     <View>
       <Text>{workout.title}</Text>

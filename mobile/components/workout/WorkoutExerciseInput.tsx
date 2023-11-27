@@ -1,7 +1,7 @@
 import { Button, FlatList, Pressable, Text, View } from 'react-native';
 
 import WorkoutSetInput from './WorkoutSetInput';
-import { ExerciseEntity, SetType, WorkoutEntityExercise, WorkoutEntityExerciseSet } from '../../types';
+import { ExerciseModel, SetType, WorkoutModelExercise, WorkoutModelExerciseSet } from '../../types';
 
 export default function WorkoutExerciseInput({
   workoutExercise,
@@ -9,25 +9,24 @@ export default function WorkoutExerciseInput({
   update,
   remove,
 }: {
-  workoutExercise: WorkoutEntityExercise;
-  exercise: ExerciseEntity;
-  update: (item: WorkoutEntityExercise) => void;
+  workoutExercise: WorkoutModelExercise;
+  exercise: ExerciseModel;
+  update: (item: WorkoutModelExercise) => void;
   remove: () => void;
 }) {
   function addSet() {
-    const set: WorkoutEntityExerciseSet = {
+    const set: WorkoutModelExerciseSet = {
       weight: 0,
       reps: 0,
       set_type: SetType.Default,
       ...(workoutExercise?.sets[workoutExercise.sets.length - 1] ?? {}),
-      finished: false,
       time: 0,
     };
 
     update({ ...workoutExercise, sets: [...workoutExercise.sets, set] });
   }
 
-  function updateSet(set: WorkoutEntityExerciseSet, index: number) {
+  function updateSet(set: WorkoutModelExerciseSet, index: number) {
     const clone = workoutExercise.sets.slice();
 
     // TODO: do this in a performant way

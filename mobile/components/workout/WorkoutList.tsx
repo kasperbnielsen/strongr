@@ -1,9 +1,9 @@
 import { FlatList } from 'react-native';
 
 import WorkoutListItem from './WorkoutListItem';
-import { WorkoutEntity } from '../../types';
+import { WorkoutModel } from '../../types';
 
-export default function WorkoutList({ workouts }: { workouts: WorkoutEntity[] }) {
+export default function WorkoutList({ workouts }: { workouts: WorkoutModel[] }) {
   return (
     <FlatList
       data={workouts}
