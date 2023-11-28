@@ -1,13 +1,14 @@
-import { View, Text, ImageBackground } from 'react-native';
+import { View, Text, ImageBackground, Modal } from 'react-native';
 
-export default function SignupModal({ visibility, close }: { visibility: boolean; close: () => void }) {
+export default function SignupModal({ visible, close }: { visible: boolean; close: () => void }) {
   const image = { uri: '../../assets/desktop-bg.svg' };
 
   return (
-    <View>
+    <Modal animationType='none' onRequestClose={close} visible={visible} style={{ height: '100%' }}>
       <ImageBackground source={image} resizeMode='cover'>
         <Text>Signup</Text>
+        <Text>Hello</Text>
       </ImageBackground>
-    </View>
+    </Modal>
   );
 }

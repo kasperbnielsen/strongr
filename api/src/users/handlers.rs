@@ -16,12 +16,9 @@ pub fn get_collection<T>(database: mongodb::Client) -> mongodb::Collection<T> {
 }
 
 pub fn hash_password(password: String) -> Result<String, ApiError> {
-    bcrypt::hash(password, 10).map_err(|error| ApiError::ResourceNotFound)
+    bcrypt::hash(password, 10).map_err(|_error| ApiError::ResourceNotFound)
 }
 
-pub fn verify_password(password: String, hash: &str) -> Result<bool, ApiError> {
-    bcrypt::verify(password, hash).map_err(|error| ApiError::ResourceNotFound)
-}
 pub async fn get_user_by_id(
     State(database): State<mongodb::Client>,
     user_id: Path<String>,
@@ -49,9 +46,9 @@ pub async fn create_user(
             UserModelWithoutId {
                 first_name: payload.first_name,
                 last_name: payload.last_name,
-                token: encode_token().unwrap(),
+                token: encode_token(payload.email.clone()).unwrap(),
                 email: payload.email,
-                password: payload.password,
+                password: hash_password(payload.password)?,
             },
             None,
         )
