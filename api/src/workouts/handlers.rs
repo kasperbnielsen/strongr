@@ -5,7 +5,11 @@ use axum::{
     http::StatusCode,
     Json,
 };
+
+use axum_auth::AuthBearer;
+
 use futures::StreamExt;
+use jsonwebtoken::Header;
 use mongodb::{
     bson::{self, doc, oid::ObjectId, Bson, Document},
     results::InsertOneResult,
@@ -26,6 +30,7 @@ pub fn get_collection<T>(database: mongodb::Client) -> mongodb::Collection<T> {
 
 pub async fn create_workout(
     State(database): State<mongodb::Client>,
+    AuthBearer(token): AuthBearer,
     Json(payload): Json<CreateWorkoutInput>,
 ) -> Result<(StatusCode, Json<InsertOneResult>), ApiError> {
     let collection: Collection<WorkoutOutputWithoutId> = get_collection(database);

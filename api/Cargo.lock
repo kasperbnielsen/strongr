@@ -50,6 +50,7 @@ name = "api"
 version = "0.0.1"
 dependencies = [
  "axum",
+ "axum-auth",
  "axum-login",
  "bcrypt",
  "chrono",
@@ -110,6 +111,18 @@ dependencies = [
  "tower",
  "tower-layer",
  "tower-service",
+]
+
+[[package]]
+name = "axum-auth"
+version = "0.4.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "fe42cdd03ddd244e9e2f5ceb7c6e1d6a123db07cdb8570250392459ef635a016"
+dependencies = [
+ "async-trait",
+ "axum-core",
+ "base64 0.13.1",
+ "http",
 ]
 
 [[package]]

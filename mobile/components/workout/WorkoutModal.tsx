@@ -8,8 +8,16 @@ import WorkoutTitleInput from './WorkoutTitleInput';
 import { HARDCODED_USER_ID } from '../../dummy';
 import { getExercises } from '../../endpoints/exercises';
 import { createWorkout } from '../../endpoints/workouts';
-import { ExerciseModel, SetType, WorkoutModel, WorkoutModelExercise, WorkoutModelExerciseSet } from '../../types';
+import {
+  ExerciseModel,
+  SetType,
+  UserModel,
+  WorkoutModel,
+  WorkoutModelExercise,
+  WorkoutModelExerciseSet,
+} from '../../types';
 import ExerciseInputModal from '../exercise/ExerciseInputModal';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 function generateWorkoutTitle() {
   const localHour = new Date().getHours();
@@ -31,10 +39,19 @@ export default function WorkoutModal() {
 
   const [startedAt] = useState(new Date());
 
+  const [data, setData] = useState<UserModel>();
+
   const [workoutExercises, setWorkoutExercises] = useState<WorkoutModel['exercises']>([]);
+  const getData = async () => {
+    const value = await AsyncStorage.getItem('token');
+    if (value !== null) {
+      setData(JSON.parse(value));
+    }
+  };
 
   useEffect(() => {
     getExercises().then(setExercises);
+    getData();
   }, []);
 
   async function save() {
@@ -42,15 +59,18 @@ export default function WorkoutModal() {
 
     if (!trimmedTitle.length) return;
 
-    await createWorkout({
-      title: trimmedTitle,
-      note: note?.trim() ?? '',
-      // TODO: get from global state
-      user_id: HARDCODED_USER_ID,
-      started_at: startedAt,
-      finished_at: new Date(),
-      exercises: workoutExercises,
-    });
+    await createWorkout(
+      {
+        title: trimmedTitle,
+        note: note?.trim() ?? '',
+        // TODO: get from global state
+        user_id: HARDCODED_USER_ID,
+        started_at: startedAt,
+        finished_at: new Date(),
+        exercises: workoutExercises,
+      },
+      data.token
+    );
   }
 
   function removeExercise(index: number) {
