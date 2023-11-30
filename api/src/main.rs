@@ -1,13 +1,16 @@
 use authentication::handlers::authenticate_credentials;
 use axum::{
     extract::State,
+    http::{header::AUTHORIZATION, Request},
     routing::{get, post, put},
 };
+use axum_auth::AuthBearer;
 use database::setup_database_client;
 use exercises::handlers::{
     create_exercise, create_exercise_for_user, get_exercise_by_id, get_exercises,
     update_exercise_by_id,
 };
+use jwt::logic::verify_token;
 use tower_http::cors::{Any, CorsLayer};
 use users::handlers::{create_user, get_user_by_id, update_user_by_id};
 use workouts::handlers::{
@@ -31,10 +34,13 @@ pub async fn index() -> String {
 async fn main() {
     let database = setup_database_client().await.unwrap();
     let layer: CorsLayer = CorsLayer::new().allow_origin(Any).allow_headers(Any);
+    let AuthBearer(token): AuthBearer;
 
     let app = axum::Router::new()
-        .route("/", get(index))
+        .route("/workouts", post(create_workout))
+        .layer(axum::middleware::from_fn(verify_token))
         .route("/users", post(create_user))
+        .route("/", get(index))
         .route(
             "/users/:user_id",
             get(get_user_by_id).put(update_user_by_id),
@@ -45,7 +51,6 @@ async fn main() {
             "/exercises/:exercise_id",
             get(get_exercise_by_id).put(update_exercise_by_id),
         )
-        .route("/workouts", post(create_workout))
         .route(
             "/workouts/:workout_id",
             get(get_workout_by_id)

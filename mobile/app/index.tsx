@@ -20,7 +20,6 @@ export default function HomePage() {
 
   useEffect(() => {
     getData();
-
     if (data) {
       setVisible(false);
     } else {
@@ -31,7 +30,7 @@ export default function HomePage() {
   return (
     <View>
       <View style={{ height: '100%' }}>
-        <LoginModal visible={visible} next={() => setSignup(true)} close={() => setVisible(false)} onAuth={getData} />
+        <LoginModal visible={visible} next={() => setSignup(true)} close={() => setVisible(false)} />
       </View>
       <View style={{ height: '100%', flex: 1 }}>
         <SignupModal visible={signup} close={() => setSignup} />

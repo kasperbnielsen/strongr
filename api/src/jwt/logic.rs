@@ -1,7 +1,9 @@
+use axum::{http::Request, middleware::Next, response::Response};
+use axum_auth::AuthBearer;
 use chrono::{Duration, Utc};
 use jsonwebtoken::{decode, encode, DecodingKey, EncodingKey, Header, Validation};
 
-use crate::error::ApiError;
+use crate::{authentication::models::UserModel, error::ApiError};
 
 use super::models::Claims;
 
@@ -18,20 +20,23 @@ pub fn encode_token(issuer: String) -> Result<String, ApiError> {
     encode(&Header::default(), &claim, &encoding_key).map_err(|_error| ApiError::ResourceNotFound)
 }
 
-pub fn verify_token(token: String) -> Result<bool, ApiError> {
+pub async fn verify_token<T>(req: Request<T>, next: Next<T>) -> Response {
     let secret = dotenv::var("JWT_SECRET").expect("JWT_SECRET not set!");
-
-    let temp = decode::<Claims>(
-        &token,
+    let _ = decode::<Claims>(
+        req.headers()
+            .get("Authorization")
+            .unwrap()
+            .to_str()
+            .unwrap(),
         &DecodingKey::from_secret(secret.as_bytes()),
         &Validation::new(jsonwebtoken::Algorithm::ES256),
     )
     .map_err(|err| match err.kind() {
         jsonwebtoken::errors::ErrorKind::ExpiredSignature => ApiError::ResourceNotFound,
         _ => ApiError::ResourceNotFound,
-    })?;
+    });
 
-    println!("{:?}", temp);
+    let response = next.run(req).await;
 
-    Ok(true)
+    response
 }

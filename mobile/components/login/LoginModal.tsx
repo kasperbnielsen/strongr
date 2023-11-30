@@ -11,12 +11,10 @@ export default function LoginModal({
   visible,
   close,
   next,
-  onAuth,
 }: {
   visible: boolean;
   close: () => void;
   next: () => void;
-  onAuth: () => void;
 }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -31,12 +29,9 @@ export default function LoginModal({
 
   async function submit() {
     const res = await AuthenticateCredentials(email, password);
-    onAuth();
     if (res) {
       const myData: UserModel = await res.json();
       data(JSON.stringify(myData));
-    } else {
-      return Error('');
     }
     // AuthenticateSession('');
   }
