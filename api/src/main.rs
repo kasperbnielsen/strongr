@@ -33,12 +33,11 @@ pub async fn index() -> String {
 #[tokio::main]
 async fn main() {
     let database = setup_database_client().await.unwrap();
-    let layer: CorsLayer = CorsLayer::new().allow_origin(Any).allow_headers(Any);
+    let cors_layer: CorsLayer = CorsLayer::new().allow_origin(Any).allow_headers(Any);
     let AuthBearer(token): AuthBearer;
 
     let app = axum::Router::new()
         .route("/workouts", post(create_workout))
-        .layer(axum::middleware::from_fn(verify_token))
         .route("/users", post(create_user))
         .route("/", get(index))
         .route(
@@ -58,8 +57,10 @@ async fn main() {
                 .delete(delete_workout_by_id),
         )
         .route("/users/:user_id/workouts", get(get_user_workouts))
+        .layer(axum::middleware::from_fn(verify_token))
+
         .route("/auth", post(authenticate_credentials))
-        .layer(layer);
+        .layer(cors_layer);
 
     let app = app.with_state(database);
 

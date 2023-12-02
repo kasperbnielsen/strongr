@@ -1,19 +1,16 @@
-import { get } from 'react-native/Libraries/TurboModule/TurboModuleRegistry';
-import { API_BASE_URL } from '../';
+import axios from 'axios';
+
+import { API_BASE_URL, responseAxios } from '../';
 import { ExerciseModel } from '../../types';
 
 export async function getExercises() {
-  return fetch(`${API_BASE_URL}/exercises`).then((res): Promise<ExerciseModel[]> => res.json());
+  return axios.get(`${API_BASE_URL}/exercises`).then(responseAxios<ExerciseModel[]>);
 }
 
 export async function createExercise(entity: ExerciseModel) {
-  fetch(`${API_BASE_URL}/exercises`, {
-    method: 'POST',
-    body: JSON.stringify({
-      title: entity.title,
-      description: entity.description,
-      exercise_type: entity.exercise_type,
-    }),
-    headers: { 'Content-Type': 'application/json' },
+  await axios.post(`${API_BASE_URL}/exercises`, {
+    title: entity.title,
+    description: entity.description,
+    exercise_type: entity.exercise_type,
   });
 }

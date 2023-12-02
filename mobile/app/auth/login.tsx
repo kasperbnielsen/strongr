@@ -8,9 +8,5 @@ import SignUpPage from './register';
 import SignupModal from '../../components/login/SignupModal';
 
 export default function LoginPage() {
-  return (
-    <View style={{ height: '100%' }}>
-      <Text style={{ height: '25%', alignSelf: 'center', fontSize: 26, paddingTop: 50, color: 'white' }}> Login </Text>
-    </View>
-  );
+  return <View style={{ height: '100%' }}></View>;
 }

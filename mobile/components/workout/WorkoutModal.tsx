@@ -39,13 +39,13 @@ export default function WorkoutModal() {
 
   const [startedAt] = useState(new Date());
 
-  const [data, setData] = useState<UserModel>();
+  const [data, setData] = useState<string>();
 
   const [workoutExercises, setWorkoutExercises] = useState<WorkoutModel['exercises']>([]);
   const getData = async () => {
     const value = await AsyncStorage.getItem('token');
     if (value !== null) {
-      setData(JSON.parse(value));
+      setData(value);
     }
   };
 
@@ -59,18 +59,15 @@ export default function WorkoutModal() {
 
     if (!trimmedTitle.length) return;
 
-    await createWorkout(
-      {
-        title: trimmedTitle,
-        note: note?.trim() ?? '',
-        // TODO: get from global state
-        user_id: HARDCODED_USER_ID,
-        started_at: startedAt,
-        finished_at: new Date(),
-        exercises: workoutExercises,
-      },
-      data.token
-    );
+    await createWorkout({
+      title: trimmedTitle,
+      note: note?.trim() ?? '',
+      // TODO: get from global state
+      user_id: HARDCODED_USER_ID,
+      started_at: startedAt,
+      finished_at: new Date(),
+      exercises: workoutExercises,
+    });
   }
 
   function removeExercise(index: number) {

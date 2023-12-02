@@ -3,7 +3,9 @@
 */
 
 export interface UserModel {
-  _id: string;
+  _id: {
+    $oid: string;
+  };
   first_name: string;
   last_name: string;
   email: string;

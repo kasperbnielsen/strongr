@@ -7,6 +7,7 @@ pub enum ApiError {
     MongoError(mongodb::error::Error),
     ResourceNotFound,
     Unauthorized(StatusCode),
+    JwtError(jsonwebtoken::errors::Error),
 }
 
 pub const TEXT_RED: &str = "\x1B[31m";
@@ -22,7 +23,14 @@ impl std::fmt::Display for ApiError {
             ApiError::MongoError(err) => err.fmt(f),
             ApiError::ResourceNotFound => write!(f, "Resource not found"),
             ApiError::Unauthorized(err) => err.fmt(f),
+            ApiError::JwtError(err) => err.fmt(f),
         }
+    }
+}
+
+impl From<jsonwebtoken::errors::Error> for ApiError {
+    fn from(value: jsonwebtoken::errors::Error) -> Self {
+        Self::JwtError(value)
     }
 }
 
@@ -61,6 +69,12 @@ impl IntoResponse for ApiError {
             ApiError::Unauthorized(_) => {
                 let mut response = Response::default();
                 *response.status_mut() = StatusCode::UNAUTHORIZED;
+                response
+            }
+            ApiError::JwtError(err) => {
+                let mut response = Response::default();
+                *response.status_mut() = StatusCode::UNAUTHORIZED;
+                eprintln!("{:?}", err);
                 response
             }
         }

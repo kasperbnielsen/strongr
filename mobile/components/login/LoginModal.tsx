@@ -5,45 +5,31 @@ import { TextInput, View, Text, Pressable, Modal, ImageBackground, Button } from
 
 import { AuthenticateCredentials } from '../../endpoints/authentication';
 import { UserModel } from '../../types';
+import SignupModal from './SignupModal';
 const image = { uri: '../../assets/desktop-bg.svg' };
 
-export default function LoginModal({
-  visible,
-  close,
-  next,
-}: {
-  visible: boolean;
-  close: () => void;
-  next: () => void;
-}) {
+export default function LoginModal(navigation, { isLogged }: { isLogged: () => void }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
 
-  const data = async (value) => {
+  async function submit() {
+    const res = await AuthenticateCredentials(email, password);
+    const model: UserModel = res.data;
     try {
-      await AsyncStorage.setItem('token', value);
+      await AsyncStorage.setItem('token', model.token);
+      await AsyncStorage.setItem('userid', model._id.$oid);
+      await AsyncStorage.setItem('useremail', model.email);
+      await AsyncStorage.setItem('userfirstname', model.first_name);
+      await AsyncStorage.setItem('userlastname', model.last_name);
     } catch (e) {
       console.log('Storage error');
     }
-  };
-
-  async function submit() {
-    const res = await AuthenticateCredentials(email, password);
-    if (res) {
-      const myData: UserModel = await res.json();
-      data(JSON.stringify(myData));
-    }
-    // AuthenticateSession('');
   }
+  // AuthenticateSession('');
 
   return (
-    <Modal
-      animationType='none'
-      onRequestClose={close}
-      visible={visible}
-      style={{ width: '100%', alignSelf: 'center', height: '100%' }}
-    >
-      <ImageBackground source={image} resizeMode='contain'>
+    <ImageBackground source={image} resizeMode='cover' style={{ height: '100%' }}>
+      <View style={{ width: '100%', alignSelf: 'center', height: '100%' }}>
         <View style={{ height: '70%', marginTop: 100 }}>
           <TextInput
             placeholder='Email'
@@ -74,13 +60,13 @@ export default function LoginModal({
           </Pressable>
         </View>
         <View style={{ alignSelf: 'center', bottom: 0, height: '5%', position: 'absolute' }}>
-          <Pressable onPress={next}>
+          <Pressable onPress={() => navigation.navigate('Signup')}>
             <Text>
               Don't have an account yet? <span style={{ color: 'blue' }}>Sign up here!</span>
             </Text>
           </Pressable>
         </View>
-      </ImageBackground>
-    </Modal>
+      </View>
+    </ImageBackground>
   );
 }

@@ -4,11 +4,10 @@ export default function SignupModal({ visible, close }: { visible: boolean; clos
   const image = { uri: '../../assets/desktop-bg.svg' };
 
   return (
-    <Modal animationType='none' onRequestClose={close} visible={visible} style={{ height: '100%' }}>
-      <ImageBackground source={image} resizeMode='cover'>
-        <Text>Signup</Text>
-        <Text>Hello</Text>
-      </ImageBackground>
-    </Modal>
+    <ImageBackground source={image} resizeMode='cover' style={{ height: '100%' }}>
+      <View style={{ height: '100%' }}>
+        <Text>hello</Text>
+      </View>
+    </ImageBackground>
   );
 }
