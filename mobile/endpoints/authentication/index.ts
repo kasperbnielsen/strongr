@@ -19,7 +19,7 @@ export async function AuthenticateSession(jwtToken: string) {
 }
 
 export async function RefreshToken(refreshToken: string): Promise<string> {
-  let userid = await AsyncStorage.getItem('userid');
+  const userid = await AsyncStorage.getItem('userid');
   return await axios.post(`${API_BASE_URL}/refresh`, {
     refresh: [refreshToken, userid],
   });

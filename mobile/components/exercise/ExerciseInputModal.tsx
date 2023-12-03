@@ -37,7 +37,6 @@ export default function ExerciseInputModal({
             ? exercises?.filter((e) => e?.title?.toLowerCase()?.includes(search.trim().toLowerCase()))
             : exercises ?? []
         }
-        keyExtractor={(e) => e._id}
         renderItem={({ item }) => <Button title={item.title} onPress={() => addExercise(item)} />}
       />
     </Modal>

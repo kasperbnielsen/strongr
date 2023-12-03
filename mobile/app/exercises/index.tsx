@@ -3,6 +3,8 @@ import { Button, FlatList, Text, View } from 'react-native';
 import { ExerciseModel } from '../../types';
 import { createExercise, getExercises } from '../../endpoints/exercises';
 import ExerciseInputModal from '../../components/exercise/ExerciseInputModal';
+import NewExercise from '../../components/exercise/NewExercise';
+import BottomNavBar from '../../components/navbar/BottomNavBar';
 
 export default function ExerciseOverview() {
   const [exercises, setExercises] = useState<ExerciseModel[]>([]);
@@ -18,22 +20,9 @@ export default function ExerciseOverview() {
   }
 
   return (
-    <View>
-      <FlatList
-        style={{ marginTop: 16 }}
-        data={exercises}
-        keyExtractor={(e) => e._id}
-        renderItem={({ item }) => (
-          <ExerciseInputModal
-            visible={showExercise}
-            exercises={exercises}
-            close={() => {
-              setShowExercise(false);
-            }}
-            addExercise={addExercise}
-          />
-        )}
-      />
+    <View style={{ height: '100%' }}>
+      <NewExercise />
+      <BottomNavBar newState={[false, false, false, false, true]} />
     </View>
   );
 }
