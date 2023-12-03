@@ -3,14 +3,17 @@
 */
 
 export interface UserModel {
-  _id: {
-    $oid: string;
+  model: {
+    _id: {
+      $oid: string;
+    };
+    first_name: string;
+    last_name: string;
+    email: string;
+    password: string;
   };
-  first_name: string;
-  last_name: string;
-  email: string;
-  password: string;
   token: string;
+  refresh: string;
 }
 
 export enum ExerciseType {

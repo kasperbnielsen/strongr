@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link } from 'expo-router';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { TextInput, View, Text, Pressable, Modal, ImageBackground, Button } from 'react-native';
 
 import { AuthenticateCredentials } from '../../endpoints/authentication';
@@ -8,24 +8,34 @@ import { UserModel } from '../../types';
 import SignupModal from './SignupModal';
 const image = { uri: '../../assets/desktop-bg.svg' };
 
-export default function LoginModal(navigation, { isLogged }: { isLogged: () => void }) {
+export default function LoginModal({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [model, setModel] = useState<UserModel>(null);
 
   async function submit() {
     const res = await AuthenticateCredentials(email, password);
-    const model: UserModel = res.data;
+    setModel(res.data);
+  }
+
+  const getStorage = async () => {
     try {
       await AsyncStorage.setItem('token', model.token);
-      await AsyncStorage.setItem('userid', model._id.$oid);
-      await AsyncStorage.setItem('useremail', model.email);
-      await AsyncStorage.setItem('userfirstname', model.first_name);
-      await AsyncStorage.setItem('userlastname', model.last_name);
+      await AsyncStorage.setItem('userid', model.model._id.$oid);
+      await AsyncStorage.setItem('useremail', model.model.email);
+      await AsyncStorage.setItem('userfirstname', model.model.first_name);
+      await AsyncStorage.setItem('userlastname', model.model.last_name);
+      await AsyncStorage.setItem('refresh', model.refresh);
     } catch (e) {
-      console.log('Storage error');
+      console.log(e);
     }
-  }
-  // AuthenticateSession('');
+  };
+
+  useEffect(() => {
+    if (model !== null) {
+      getStorage().then(() => window.location.reload());
+    }
+  }, [model]);
 
   return (
     <ImageBackground source={image} resizeMode='cover' style={{ height: '100%' }}>

@@ -14,7 +14,6 @@ pub struct UserModelWithoutId {
     pub last_name: String,
     pub email: String,
     pub password: String,
-    pub token: String,
 }
 
 #[derive(serde::Deserialize)]

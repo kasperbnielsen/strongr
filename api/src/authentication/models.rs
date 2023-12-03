@@ -1,5 +1,5 @@
-use axum::{response::IntoResponse, Json};
-use mongodb::bson::{oid::ObjectId, serde_helpers::hex_string_as_object_id};
+use axum::response::IntoResponse;
+use mongodb::bson::serde_helpers::hex_string_as_object_id;
 use typeshare::typeshare;
 
 #[derive(serde::Deserialize, Debug)]
@@ -17,7 +17,18 @@ pub struct UserModel {
     pub last_name: String,
     pub email: String,
     pub password: String,
+}
+#[derive(serde::Deserialize, serde::Serialize, Debug)]
+pub struct UserAuthResponse {
+    pub model: UserModel,
     pub token: String,
+    pub refresh: String,
+}
+
+impl IntoResponse for UserAuthResponse {
+    fn into_response(self) -> axum::response::Response {
+        axum::Json(self).into_response()
+    }
 }
 
 impl IntoResponse for UserModel {

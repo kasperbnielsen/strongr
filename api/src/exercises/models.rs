@@ -1,8 +1,5 @@
 use axum::response::IntoResponse;
-use mongodb::bson::{
-    oid::ObjectId,
-    serde_helpers::{self, hex_string_as_object_id},
-};
+use mongodb::bson::{oid::ObjectId, serde_helpers::hex_string_as_object_id};
 use typeshare::typeshare;
 
 #[typeshare]

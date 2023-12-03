@@ -1,6 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import axios from 'axios';
+import axios, { HttpStatusCode } from 'axios';
 import 'expo-router/entry';
+import { RefreshToken } from './endpoints/authentication';
 
 axios.interceptors.request.use(
   async function (config) {
@@ -11,8 +12,14 @@ axios.interceptors.request.use(
 
     return config;
   },
-  function (error) {
+  async function (error) {
     // Do something with request error
+    if (error === HttpStatusCode.ImATeapot) {
+      const refreshToken = await AsyncStorage.getItem('refresh');
+
+      await AsyncStorage.setItem('refresh', await RefreshToken(refreshToken));
+    }
+
     return Promise.reject(error);
   }
 );

@@ -7,7 +7,7 @@ use axum::{
 };
 use mongodb::{bson::doc, Collection};
 
-use crate::{error::ApiError, jwt::logic::encode_token};
+use crate::error::ApiError;
 
 use super::models::{UpdateUserInput, UserModel, UserModelOutput, UserModelWithoutId};
 
@@ -46,7 +46,6 @@ pub async fn create_user(
             UserModelWithoutId {
                 first_name: payload.first_name,
                 last_name: payload.last_name,
-                token: encode_token(payload.email.clone()).unwrap(),
                 email: payload.email,
                 password: hash_password(payload.password)?,
             },

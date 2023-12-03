@@ -9,19 +9,17 @@ use axum::{
 use axum_auth::AuthBearer;
 
 use futures::StreamExt;
-use jsonwebtoken::Header;
 use mongodb::{
-    bson::{self, doc, oid::ObjectId, Bson, Document},
+    bson::{doc, oid::ObjectId},
     results::InsertOneResult,
     Collection,
 };
 
-use crate::{error::ApiError, exercises, workouts::models::SetType};
+use crate::{error::ApiError, jwt::logic::get_user_id};
 
 use super::models::{
-    CreateWorkoutInput, UpdateWorkoutInput, WorkoutExerciseInput, WorkoutExerciseSetInput,
-    WorkoutModel, WorkoutModelExercise, WorkoutModelExerciseSet, WorkoutOutput, WorkoutOutputList,
-    WorkoutOutputWithoutId,
+    CreateWorkoutInput, UpdateWorkoutInput, WorkoutModel, WorkoutModelExercise,
+    WorkoutModelExerciseSet, WorkoutOutput, WorkoutOutputList, WorkoutOutputWithoutId,
 };
 
 pub fn get_collection<T>(database: mongodb::Client) -> mongodb::Collection<T> {
@@ -54,8 +52,10 @@ pub async fn create_workout(
         })
         .collect::<Vec<_>>();
 
+    let user = get_user_id(token).await?;
+
     let output = WorkoutOutputWithoutId {
-        user_id: ObjectId::from_str("655a1372a19229cee0b4cde3")?, //change to current logged users id
+        user_id: ObjectId::from_str(&user)?, //change to current logged users id
         title: payload.title,
         note: payload.note,
         exercises: result,

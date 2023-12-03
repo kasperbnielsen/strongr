@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Button, FlatList, Text, View } from 'react-native';
-import { ExerciseEntity } from '../../types';
+import { ExerciseModel } from '../../types';
 import { createExercise, getExercises } from '../../endpoints/exercises';
 import ExerciseInputModal from '../../components/exercise/ExerciseInputModal';
 
 export default function ExerciseOverview() {
-  const [exercises, setExercises] = useState<ExerciseEntity[]>([]);
+  const [exercises, setExercises] = useState<ExerciseModel[]>([]);
 
   const [showExercise, setShowExercise] = useState<boolean>(true);
 
@@ -13,7 +13,7 @@ export default function ExerciseOverview() {
     getExercises().then(setExercises);
   }, []);
 
-  function addExercise(entity: ExerciseEntity) {
+  function addExercise(entity: ExerciseModel) {
     createExercise(entity);
   }
 

@@ -46,8 +46,6 @@ pub async fn create_exercise_for_user(
 ) -> Result<(StatusCode, Json<InsertOneResult>), ApiError> {
     let collection = get_collection(database);
 
-    const HARDCODED_USER: &str = "6544111bdae4c520a44a8bdb";
-
     let exercise = ExerciseModelWithoutId {
         title: payload.title,
         description: payload.description,

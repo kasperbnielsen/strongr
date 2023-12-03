@@ -8,6 +8,7 @@ pub enum ApiError {
     ResourceNotFound,
     Unauthorized(StatusCode),
     JwtError(jsonwebtoken::errors::Error),
+    ExpiredToken,
 }
 
 pub const TEXT_RED: &str = "\x1B[31m";
@@ -24,13 +25,17 @@ impl std::fmt::Display for ApiError {
             ApiError::ResourceNotFound => write!(f, "Resource not found"),
             ApiError::Unauthorized(err) => err.fmt(f),
             ApiError::JwtError(err) => err.fmt(f),
+            ApiError::ExpiredToken => write!(f, "Token is expired"),
         }
     }
 }
 
 impl From<jsonwebtoken::errors::Error> for ApiError {
     fn from(value: jsonwebtoken::errors::Error) -> Self {
-        Self::JwtError(value)
+        match value.kind() {
+            jsonwebtoken::errors::ErrorKind::ExpiredSignature => ApiError::ExpiredToken,
+            _ => Self::JwtError(value),
+        }
     }
 }
 
@@ -75,6 +80,11 @@ impl IntoResponse for ApiError {
                 let mut response = Response::default();
                 *response.status_mut() = StatusCode::UNAUTHORIZED;
                 eprintln!("{:?}", err);
+                response
+            }
+            ApiError::ExpiredToken => {
+                let mut response = Response::default();
+                *response.status_mut() = StatusCode::IM_A_TEAPOT;
                 response
             }
         }
