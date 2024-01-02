@@ -1,4 +1,4 @@
-use std::str::FromStr;
+use core::str::FromStr;
 
 use axum::{
     extract::State,
@@ -75,7 +75,7 @@ pub async fn encode_refresh_token(user_id: ObjectId) -> Result<RefreshToken, Api
     let date = DateTime::from_millis(exp * 1000);
 
     let refresh_token = RefreshToken {
-        user_id: user_id,
+        user_id,
         token: token.to_string(),
         exp: date,
     };
@@ -100,7 +100,7 @@ pub async fn refresh_jwt_token(
         .await?;
 
     if let Some(token) = token {
-        return Ok(encode_token(&token.user_id.to_hex()).await?);
+        return encode_token(&token.user_id.to_hex()).await;
     }
 
     Err(ApiError::Unauthorized(StatusCode::UNAUTHORIZED))

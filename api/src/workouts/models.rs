@@ -155,7 +155,7 @@ impl From<WorkoutModelExercise> for WorkoutExerciseInput {
 
 impl From<WorkoutModelExerciseSet> for WorkoutExerciseSetInput {
     fn from(value: WorkoutModelExerciseSet) -> Self {
-        WorkoutExerciseSetInput {
+        Self {
             set_type: value.set_type,
             weight: value.weight,
             reps: value.reps,

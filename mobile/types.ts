@@ -35,6 +35,8 @@ export enum SetType {
   Failure = 'Failure',
 }
 
+export let ExerciseTypes = ['Legs', 'Biceps', 'Back', 'Shoulders', 'Triceps', 'Chest'];
+
 export interface WorkoutModelExerciseSet {
   set_type: SetType;
   weight: number;

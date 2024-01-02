@@ -15,17 +15,17 @@ pub const TEXT_RED: &str = "\x1B[31m";
 
 pub const TEXT_RESET: &str = "\x1B[39m";
 
-impl std::fmt::Display for ApiError {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+impl core::fmt::Display for ApiError {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
         match self {
-            ApiError::InvalidObjectId(err) => {
+            Self::InvalidObjectId(err) => {
                 write!(f, "{TEXT_RED}{err}{TEXT_RESET}")
             }
-            ApiError::MongoError(err) => err.fmt(f),
-            ApiError::ResourceNotFound => write!(f, "Resource not found"),
-            ApiError::Unauthorized(err) => err.fmt(f),
-            ApiError::JwtError(err) => err.fmt(f),
-            ApiError::ExpiredToken => write!(f, "Token is expired"),
+            Self::MongoError(err) => err.fmt(f),
+            Self::ResourceNotFound => write!(f, "Resource not found"),
+            Self::Unauthorized(err) => err.fmt(f),
+            Self::JwtError(err) => err.fmt(f),
+            Self::ExpiredToken => write!(f, "Token is expired"),
         }
     }
 }
@@ -33,7 +33,7 @@ impl std::fmt::Display for ApiError {
 impl From<jsonwebtoken::errors::Error> for ApiError {
     fn from(value: jsonwebtoken::errors::Error) -> Self {
         match value.kind() {
-            jsonwebtoken::errors::ErrorKind::ExpiredSignature => ApiError::ExpiredToken,
+            jsonwebtoken::errors::ErrorKind::ExpiredSignature => Self::ExpiredToken,
             _ => Self::JwtError(value),
         }
     }
@@ -54,35 +54,35 @@ impl From<mongodb::error::Error> for ApiError {
 impl IntoResponse for ApiError {
     fn into_response(self) -> axum::response::Response {
         match self {
-            ApiError::InvalidObjectId(err) => {
+            Self::InvalidObjectId(err) => {
                 let mut response = Response::default();
                 *response.status_mut() = StatusCode::NOT_ACCEPTABLE;
                 eprintln!("{err}");
                 response
             }
-            ApiError::MongoError(err) => {
+            Self::MongoError(err) => {
                 let mut response = Response::default();
                 *response.status_mut() = StatusCode::BAD_REQUEST;
                 eprintln!("{err}");
                 response
             }
-            ApiError::ResourceNotFound => {
+            Self::ResourceNotFound => {
                 let mut response = Response::default();
                 *response.status_mut() = StatusCode::NOT_FOUND;
                 response
             }
-            ApiError::Unauthorized(_) => {
+            Self::Unauthorized(_) => {
                 let mut response = Response::default();
                 *response.status_mut() = StatusCode::UNAUTHORIZED;
                 response
             }
-            ApiError::JwtError(err) => {
+            Self::JwtError(err) => {
                 let mut response = Response::default();
                 *response.status_mut() = StatusCode::UNAUTHORIZED;
-                eprintln!("{:?}", err);
+                eprintln!("{err:?}");
                 response
             }
-            ApiError::ExpiredToken => {
+            Self::ExpiredToken => {
                 let mut response = Response::default();
                 *response.status_mut() = StatusCode::IM_A_TEAPOT;
                 response

@@ -1,14 +1,17 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { useNavigation } from 'expo-router';
 import { createContext, useContext, useEffect, useReducer, useState } from 'react';
 import { View, Text, ImageBackground } from 'react-native';
+import { TamaguiProvider, Theme } from 'tamagui';
 
+import config from './tamagui.config';
+import Home from '../components/home/Home';
 import LoginModal from '../components/login/LoginModal';
 import SignupModal from '../components/login/SignupModal';
 import BottomNavBar from '../components/navbar/BottomNavBar';
 import WorkoutModal from '../components/workout/WorkoutModal';
-import { useNavigation } from 'expo-router';
-import Home from '../components/home/Home';
+
 const image = { uri: '../assets/desktop-bg.svg' };
 export const Stack = createNativeStackNavigator();
 
@@ -38,24 +41,26 @@ export default function HomePage() {
   }, []);
 
   return (
-    <>
-      {state.isLogged === 'UserIsLogged' ? (
-        <>
+    <TamaguiProvider config={config}>
+      <Theme>
+        {state.isLogged === 'UserIsLogged' ? (
+          <>
+            <Stack.Navigator>
+              <Stack.Screen name='Home' component={Home} options={{ headerShown: false }} />
+              <Stack.Screen name='Exercises' component={WorkoutModal} options={{ headerShown: false }} />
+              <Stack.Screen name='Settings' component={WorkoutModal} options={{ headerShown: false }} />
+              <Stack.Screen name='Workouts' component={WorkoutModal} options={{ headerShown: false }} />
+              <Stack.Screen name='Home2' component={WorkoutModal} options={{ headerShown: false }} />
+            </Stack.Navigator>
+            <BottomNavBar newState={[true, false, false, false, false]} />
+          </>
+        ) : (
           <Stack.Navigator>
-            <Stack.Screen name='Home' component={Home} options={{ headerShown: false }} />
-            <Stack.Screen name='Exercises' component={WorkoutModal} options={{ headerShown: false }} />
-            <Stack.Screen name='Settings' component={WorkoutModal} options={{ headerShown: false }} />
-            <Stack.Screen name='Workouts' component={WorkoutModal} options={{ headerShown: false }} />
-            <Stack.Screen name='Home2' component={WorkoutModal} options={{ headerShown: false }} />
+            <Stack.Screen name='Login' component={LoginModal} options={{ headerShown: false }} />
+            <Stack.Screen name='Signup' component={SignupModal} options={{ headerShown: false }} />
           </Stack.Navigator>
-          <BottomNavBar newState={[true, false, false, false, false]} />
-        </>
-      ) : (
-        <Stack.Navigator>
-          <Stack.Screen name='Login' component={LoginModal} options={{ headerShown: false }} />
-          <Stack.Screen name='Signup' component={SignupModal} options={{ headerShown: false }} />
-        </Stack.Navigator>
-      )}
-    </>
+        )}
+      </Theme>
+    </TamaguiProvider>
   );
 }

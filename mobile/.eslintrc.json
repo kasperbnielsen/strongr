@@ -1,6 +1,6 @@
 {
   "root": true,
-  "extends": ["universe/native"],
+  "extends": ["universe/native", "prettier"],
   "rules": {
     "no-useless-concat": "error",
     "prefer-template": "error",
