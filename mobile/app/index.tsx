@@ -42,7 +42,7 @@ export default function HomePage() {
 
   return (
     <TamaguiProvider config={config}>
-      <Theme>
+      <Theme name='dark'>
         {state.isLogged === 'UserIsLogged' ? (
           <>
             <Stack.Navigator>

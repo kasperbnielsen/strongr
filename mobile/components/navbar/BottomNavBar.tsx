@@ -30,68 +30,52 @@ export default function BottomNavBar({ newState }: { newState: boolean[] }) {
         justifyContent: 'center',
         position: 'absolute',
         bottom: 0,
-        height: '8%',
+        height: '10%',
         width: '100%',
       }}
     >
-      <Link style={{ width: '20%', backgroundColor: state[0] ? 'green' : 'blue', display: 'flex' }} href=''>
+      <Link style={{ width: '33.33%', backgroundColor: state[0] ? 'grey' : '#45403f', display: 'flex' }} href=''>
         <View style={{ width: '100%' }}>
           <Image
-            style={{ width: '100%', height: '65%' }}
+            style={{ width: '25%', height: '50%', alignSelf: 'center', marginTop: 10, tintColor: 'white' }}
             source={{
-              uri: 'https://static.thenounproject.com/png/5243889-200.png',
+              uri: 'https://api.iconify.design/carbon/home.svg',
             }}
           />
-          <Text style={{ width: '100%', textAlign: 'center', height: '35%', fontSize: 12 }}>Home</Text>
+          <Text style={{ width: '100%', textAlign: 'center', height: '50%', fontSize: 12, color: 'white' }}>Home</Text>
         </View>
       </Link>
 
       <Link
-        style={{ width: '20%', backgroundColor: state[1] ? 'green' : 'blue', display: 'flex' }}
+        style={{ width: '33.33%', backgroundColor: state[2] ? 'grey' : '#45403f', display: 'flex' }}
+        href='/workouts'
+      >
+        <View style={{ width: '100%' }}>
+          <Image
+            style={{ width: '25%', height: '50%', alignSelf: 'center', marginTop: 10, tintColor: 'white' }}
+            source={{
+              uri: 'https://api.iconify.design/fluent-mdl2/add-to.svg',
+            }}
+          />
+          <Text style={{ width: '100%', textAlign: 'center', height: '20%', fontSize: 12, color: 'white' }}>
+            New Workout
+          </Text>
+        </View>
+      </Link>
+      <Link
+        style={{ width: '33.33%', backgroundColor: state[1] ? 'grey' : '#45403f', display: 'flex' }}
         href={`workouts/${userid}`}
       >
         <View style={{ width: '100%' }}>
           <Image
-            style={{ width: '100%', height: '65%' }}
+            style={{ width: '25%', height: '50%', alignSelf: 'center', marginTop: 10, tintColor: 'white' }}
             source={{
-              uri: 'https://static.thenounproject.com/png/5243889-200.png',
+              uri: 'https://api.iconify.design/solar/history-line-duotone.svg',
             }}
           />
-          <Text style={{ width: '100%', textAlign: 'center', height: '35%', fontSize: 12 }}>History</Text>
-        </View>
-      </Link>
-      <Link style={{ width: '20%', backgroundColor: state[2] ? 'green' : 'blue', display: 'flex' }} href='/workouts'>
-        <View style={{ width: '100%' }}>
-          <Image
-            style={{ width: '100%', height: '65%' }}
-            source={{
-              uri: 'https://static.thenounproject.com/png/5243889-200.png',
-            }}
-          />
-          <Text style={{ width: '100%', textAlign: 'center', height: '35%', fontSize: 12 }}>New Workout</Text>
-        </View>
-      </Link>
-
-      <Link style={{ width: '20%', display: 'flex', backgroundColor: state[3] ? 'green' : 'blue' }} href='/auth/login'>
-        <View style={{ width: '100%' }}>
-          <Image
-            style={{ width: '100%', height: '65%' }}
-            source={{
-              uri: 'https://static.thenounproject.com/png/5243889-200.png',
-            }}
-          />
-          <Text style={{ width: '100%', textAlign: 'center', height: '35%', fontSize: 12 }}>GoToASD</Text>
-        </View>
-      </Link>
-      <Link style={{ width: '20%', backgroundColor: state[4] ? 'green' : 'blue', display: 'flex' }} href='/exercises'>
-        <View style={{ width: '100%' }}>
-          <Image
-            style={{ width: '100%', height: '65%' }}
-            source={{
-              uri: 'https://static.thenounproject.com/png/5243889-200.png',
-            }}
-          />
-          <Text style={{ width: '100%', textAlign: 'center', height: '35%', fontSize: 12 }}>Exercises</Text>
+          <Text style={{ width: '100%', textAlign: 'center', height: '50%', fontSize: 12, color: 'white' }}>
+            History
+          </Text>
         </View>
       </Link>
     </View>

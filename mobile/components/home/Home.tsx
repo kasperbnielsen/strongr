@@ -16,9 +16,9 @@ export default function Home() {
     getUsername();
   });
   return (
-    <View style={{ height: '100%' }}>
+    <View style={{ height: '100%', backgroundColor: '#292727' }}>
       <ScrollView>
-        <Text style={{ paddingLeft: 25, paddingTop: 15, fontSize: 22 }}> Hello {username} </Text>
+        <Text style={{ paddingLeft: 25, paddingTop: 15, fontSize: 22, color: 'white' }}> Hello {username} </Text>
         <Summary />
       </ScrollView>
       <BottomNavBar newState={[true, false, false, false, false]} />

@@ -10,13 +10,13 @@ export default function Summary() {
       <View
         style={{
           borderStyle: 'solid',
-          borderColor: 'black',
+          borderColor: 'white',
           borderWidth: 5,
           borderRadius: 15,
           height: 150,
         }}
       >
-        <Text>Latest workout? or some summary of some kind</Text>
+        <Text style={{ color: 'white' }}>Latest workout? or some summary of some kind</Text>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', marginTop: 25 }}>
         <HomeElement />

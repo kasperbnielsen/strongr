@@ -94,8 +94,8 @@ export default function WorkoutModal() {
   const [showExerciseModal, setShowExerciseModal] = useState(false);
 
   return (
-    <View>
-      <View style={{ flex: 1, flexDirection: 'row', height: 'auto', gap: 10 }}>
+    <View style={{ backgroundColor: '#292727' }}>
+      <View style={{ flex: 1, flexDirection: 'row', height: 'auto', gap: 10, backgroundColor: '#292727' }}>
         <WorkoutTitleInput title={title} setTitle={setTitle} />
 
         <SaveWorkoutButton onClick={save} />

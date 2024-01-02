@@ -5,7 +5,7 @@ export default function HomeElement() {
     <View
       style={{
         borderStyle: 'solid',
-        borderColor: 'black',
+        borderColor: 'white',
         borderWidth: 5,
         borderRadius: 15,
         height: 150,
@@ -13,7 +13,7 @@ export default function HomeElement() {
         marginRight: '5%',
       }}
     >
-      <Text>placeholder</Text>
+      <Text style={{ color: 'white' }}>placeholder</Text>
     </View>
   );
 }
