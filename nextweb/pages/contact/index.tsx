@@ -1,7 +1,15 @@
-export default function Contact() {
+import { motion } from 'framer-motion';
+import { fadeContent } from '../_app';
+
+export default function Features() {
   return (
-    <div>
-      <p> Contact page</p>
-    </div>
+    <motion.div
+      className='flex justify-center text-center text-white text-4xl'
+      variants={fadeContent}
+      initial='hidden'
+      animate='show'
+    >
+      <p> Coming soon</p>
+    </motion.div>
   );
 }

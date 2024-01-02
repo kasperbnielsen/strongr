@@ -18,13 +18,13 @@ const fadeHeader = {
   },
 };
 
-const fadeContent = {
+export const fadeContent = {
   hidden: { opacity: 0, y: -100 },
   show: {
     opacity: 1,
     y: 0,
     transition: {
-      delay: 1,
+      delay: 0.5,
       duration: 1,
     },
   },
@@ -38,14 +38,9 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <motion.div variants={fadeHeader} initial='hidden' animate='show'>
           <Header />
         </motion.div>
-        <motion.div
-          className='p-12 h-auto z-10 flex justify-center w-screen'
-          variants={fadeContent}
-          initial='hidden'
-          animate='show'
-        >
+        <div className='p-12 h-auto z-10 flex justify-center w-screen'>
           <Component {...pageProps} />
-        </motion.div>
+        </div>
       </div>
     </div>
   );
