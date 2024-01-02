@@ -38,7 +38,12 @@ export default function MyApp({ Component, pageProps }: AppProps) {
         <motion.div variants={fadeHeader} initial='hidden' animate='show'>
           <Header />
         </motion.div>
-        <motion.div className='p-12 h-auto z-10' variants={fadeContent} initial='hidden' animate='show'>
+        <motion.div
+          className='p-12 h-auto z-10 flex justify-center w-screen'
+          variants={fadeContent}
+          initial='hidden'
+          animate='show'
+        >
           <Component {...pageProps} />
         </motion.div>
       </div>
