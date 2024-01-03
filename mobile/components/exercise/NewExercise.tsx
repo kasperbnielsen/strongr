@@ -1,16 +1,19 @@
 import { Check } from '@tamagui/lucide-icons';
 import React, { useState } from 'react';
-import { View, Text, Pressable } from 'react-native';
+import { View, Text, Pressable, Modal } from 'react-native';
 import { Input, Checkbox, Label, TextArea } from 'tamagui';
 
 import Dropdown from './Dropdown';
 import { ExerciseTypes as MuscleGroups } from '../../types';
-export default function NewExercise() {
+export default function NewExercise({ visible, close }: { visible: boolean; close: () => void }) {
   const [name, setName] = useState<string>();
-  const [visible, setVisible] = useState<boolean>();
 
   return (
-    <View style={{ alignItems: 'center', display: 'flex', width: '100%', gap: 25 }}>
+    <Modal
+      style={{ alignItems: 'center', display: 'flex', width: '100%', gap: 25 }}
+      onRequestClose={close}
+      visible={visible}
+    >
       <View style={{ flex: 1, alignSelf: 'center', flexDirection: 'row', marginTop: 50, marginBottom: 50 }}>
         <Text style={{ marginRight: 25 }}>Exercise Name</Text>
         <Input size='$4' borderWidth={2} value={name} />
@@ -57,6 +60,6 @@ export default function NewExercise() {
       >
         <Text style={{ color: 'blue', alignSelf: 'center' }}>Create</Text>
       </Pressable>
-    </View>
+    </Modal>
   );
 }

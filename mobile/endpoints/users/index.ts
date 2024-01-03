@@ -1,4 +1,5 @@
 import axios, { HttpStatusCode } from 'axios';
+
 import { API_BASE_URL } from '..';
 
 export async function signUp(email: string, password: string): Promise<HttpStatusCode> {

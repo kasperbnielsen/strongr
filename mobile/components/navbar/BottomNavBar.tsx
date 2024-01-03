@@ -1,11 +1,7 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useNavigation } from '@react-navigation/core';
-import { Link, useRootNavigation } from 'expo-router';
-import { NavigatorProps } from 'expo-router/build/views/Navigator';
+import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { View, Image, Text, Pressable } from 'react-native';
-
-import WorkoutModal from '../workout/WorkoutModal';
+import { View, Image, Text } from 'react-native';
 
 export default function BottomNavBar({ newState }: { newState: boolean[] }) {
   const [state, setState] = useState(newState);
@@ -64,17 +60,17 @@ export default function BottomNavBar({ newState }: { newState: boolean[] }) {
       </Link>
       <Link
         style={{ width: '33.33%', backgroundColor: state[1] ? 'grey' : '#45403f', display: 'flex' }}
-        href={`workouts/${userid}`}
+        href='/profile'
       >
         <View style={{ width: '100%' }}>
           <Image
             style={{ width: '25%', height: '50%', alignSelf: 'center', marginTop: 10, tintColor: 'white' }}
             source={{
-              uri: 'https://api.iconify.design/solar/history-line-duotone.svg',
+              uri: 'https://api.iconify.design/carbon/user-avatar-filled-alt.svg',
             }}
           />
           <Text style={{ width: '100%', textAlign: 'center', height: '50%', fontSize: 12, color: 'white' }}>
-            History
+            Profile
           </Text>
         </View>
       </Link>

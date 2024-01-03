@@ -1,8 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
-import { useNavigation } from 'expo-router';
-import { createContext, useContext, useEffect, useReducer, useState } from 'react';
-import { View, Text, ImageBackground } from 'react-native';
+import { useEffect, useReducer, useState } from 'react';
 import { TamaguiProvider, Theme } from 'tamagui';
 
 import config from './tamagui.config';
@@ -12,7 +10,6 @@ import SignupModal from '../components/login/SignupModal';
 import BottomNavBar from '../components/navbar/BottomNavBar';
 import WorkoutModal from '../components/workout/WorkoutModal';
 
-const image = { uri: '../assets/desktop-bg.svg' };
 export const Stack = createNativeStackNavigator();
 
 const initialState = { isLogged: 'NotLogged' };

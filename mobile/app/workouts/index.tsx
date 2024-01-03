@@ -1,12 +1,11 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 
-import WorkoutList from '../../components/workout/WorkoutList';
+import BottomNavBar from '../../components/navbar/BottomNavBar';
 import WorkoutModal from '../../components/workout/WorkoutModal';
 import { getWorkouts } from '../../endpoints/workouts';
 import { WorkoutModel } from '../../types';
-import BottomNavBar from '../../components/navbar/BottomNavBar';
 
 export default function WorkoutOverview() {
   const [workouts, setWorkouts] = useState<WorkoutModel[]>([]);
@@ -27,7 +26,7 @@ export default function WorkoutOverview() {
   }, []);
 
   return (
-    <View style={{ height: '100%' }}>
+    <View style={{ height: '100%', backgroundColor: '#292727' }}>
       <WorkoutModal />
       <BottomNavBar newState={[false, false, true, false, false]} />
     </View>

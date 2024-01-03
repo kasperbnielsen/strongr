@@ -1,11 +1,9 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Link } from 'expo-router';
-import React, { useContext, useEffect, useState } from 'react';
-import { TextInput, View, Text, Pressable, Modal, ImageBackground, Button } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import { TextInput, View, Text, Pressable, ImageBackground } from 'react-native';
 
 import { AuthenticateCredentials } from '../../endpoints/authentication';
 import { UserModel } from '../../types';
-import SignupModal from './SignupModal';
 const image = { uri: '../../assets/desktop-bg.svg' };
 
 export default function LoginModal({ navigation }) {

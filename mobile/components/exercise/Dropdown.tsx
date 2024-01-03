@@ -1,4 +1,5 @@
 import { Select } from '@tamagui/select';
+
 import { ExerciseTypes as MuscleGroups } from '../../types';
 
 export default function Dropdown({ data }: { data: string[] }) {

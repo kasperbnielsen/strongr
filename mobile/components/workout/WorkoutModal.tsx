@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
@@ -7,16 +8,9 @@ import WorkoutNoteInput from './WorkoutNoteInput';
 import WorkoutTitleInput from './WorkoutTitleInput';
 import { getExercises } from '../../endpoints/exercises';
 import { createWorkout } from '../../endpoints/workouts';
-import {
-  ExerciseModel,
-  SetType,
-  UserModel,
-  WorkoutModel,
-  WorkoutModelExercise,
-  WorkoutModelExerciseSet,
-} from '../../types';
+import { ExerciseModel, SetType, WorkoutModel, WorkoutModelExercise, WorkoutModelExerciseSet } from '../../types';
 import ExerciseInputModal from '../exercise/ExerciseInputModal';
-import AsyncStorage from '@react-native-async-storage/async-storage';
+import NewExercise from '../exercise/NewExercise';
 
 function generateWorkoutTitle() {
   const localHour = new Date().getHours();
@@ -39,6 +33,8 @@ export default function WorkoutModal() {
   const [startedAt] = useState(new Date());
 
   const [userId, setUserId] = useState<string>();
+
+  const [showExercise, setShowExercise] = useState(false);
 
   const [workoutExercises, setWorkoutExercises] = useState<WorkoutModel['exercises']>([]);
   const getData = async () => {
@@ -94,7 +90,7 @@ export default function WorkoutModal() {
   const [showExerciseModal, setShowExerciseModal] = useState(false);
 
   return (
-    <View style={{ backgroundColor: '#292727' }}>
+    <View style={{}}>
       <View style={{ flex: 1, flexDirection: 'row', height: 'auto', gap: 10, backgroundColor: '#292727' }}>
         <WorkoutTitleInput title={title} setTitle={setTitle} />
 
@@ -118,7 +114,8 @@ export default function WorkoutModal() {
       ) : (
         false
       )}
-
+      <Pressable onPress={() => setShowExercise(true)}>New Exercise</Pressable>
+      <NewExercise visible={showExercise} close={() => {}} />
       <Pressable
         onPress={() => setShowExerciseModal(true)}
         style={{ backgroundColor: 'green', width: '100%', marginTop: 32 }}

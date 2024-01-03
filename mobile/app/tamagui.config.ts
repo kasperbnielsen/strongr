@@ -5,8 +5,8 @@
 // for react-native only: @tamagui/config/v2-native
 
 import { config } from '@tamagui/config/v2';
-import { createFont, createTamagui, createTokens } from 'tamagui';
 import { createMedia } from '@tamagui/react-native-media-driver';
+import { createFont, createTamagui, createTokens } from 'tamagui';
 
 const interFont = createFont({
   family: 'Inter, Helvetica, Arial, sans-serif',
