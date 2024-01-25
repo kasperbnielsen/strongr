@@ -1,9 +1,9 @@
-import { Text, View } from 'react-native';
+import { useEffect, useState } from 'react';
+import { ScrollView, Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
-import { ExerciseModel, WorkoutModel } from '../../types';
-import { useEffect, useState } from 'react';
 import { getExercise } from '../../endpoints/exercises';
+import { ExerciseModel, WorkoutModel } from '../../types';
 
 export default function WorkoutListItem({ workout }: { workout: WorkoutModel }) {
   const [exerciseId, setExerciseId] = useState<string[]>([]);
@@ -11,21 +11,24 @@ export default function WorkoutListItem({ workout }: { workout: WorkoutModel }) 
     const exerciseIds = [];
 
     workout.exercises.forEach(async (element) => {
-      exerciseIds.push((await getExercise(element.exercise_id))._id);
+      exerciseIds.push((await getExercise(element.exercise_id.$oid)).title);
     });
 
-    setExerciseId(exerciseIds);
+    return exerciseIds;
   }
 
   useEffect(() => {
-    getExerciseName();
+    getExerciseName().then(setExerciseId);
   }, []);
 
   return (
     <View style={{ backgroundColor: 'blue', marginVertical: 8, width: '100%', borderRadius: 5 }}>
-      <View style={{ margin: 10 }}>
-        <Text>{workout.title}</Text>
-        <Text>{exerciseId[0]}</Text>
+      <View style={{ margin: 10, gap: 10 }}>
+        <View style={{ display: 'flex', flexDirection: 'row' }}>
+          <Text style={{ width: '75%' }}>{workout.title}</Text>
+          <Text style={{ width: '25%' }}>asd</Text>
+        </View>
+        <FlatList data={exerciseId} keyExtractor={(item) => item} renderItem={({ item }) => <Text>{item}</Text>} />
       </View>
       <Text>{workout.note}</Text>
     </View>

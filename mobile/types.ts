@@ -22,7 +22,7 @@ export enum ExerciseType {
 }
 
 export interface ExerciseModel {
-  _id: string;
+  _id: { $oid: string };
   title: string;
   description: string;
   exercise_type: ExerciseType;
@@ -45,7 +45,7 @@ export interface WorkoutModelExerciseSet {
 }
 
 export interface WorkoutModelExercise {
-  exercise_id: string;
+  exercise_id: { $oid: string };
   note: string;
   sets: WorkoutModelExerciseSet[];
 }

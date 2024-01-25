@@ -24,7 +24,7 @@ export default function BottomNavBar({ newState }: { newState: boolean[] }) {
         display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center',
-        position: 'absolute',
+        position: 'fixed',
         bottom: 0,
         height: '10%',
         width: '100%',

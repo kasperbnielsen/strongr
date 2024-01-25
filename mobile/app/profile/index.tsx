@@ -1,6 +1,6 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-import { Text, Image, FlatList } from 'react-native';
+import { Text, Image, FlatList, ScrollView, Pressable } from 'react-native';
 import { View } from 'tamagui';
 
 import BottomNavBar from '../../components/navbar/BottomNavBar';
@@ -8,25 +8,27 @@ import { getLastestWorkout, getWorkouts } from '../../endpoints/workouts';
 import { Link } from 'expo-router';
 import { WorkoutModel } from '../../types';
 import WorkoutListItem from '../../components/workout/WorkoutListItem';
+import Settings from '../../components/profile/Settings';
 
 export default function Profile() {
   const [username, setUsername] = useState('');
   const [userid, setUserid] = useState('');
   const [lastWorkout, setLastWorkout] = useState('');
   const [workouts, setWorkouts] = useState<WorkoutModel[]>();
+  const [open, setOpen] = useState<boolean>(false);
 
-  async function get_username() {
+  async function getUsername() {
     const first_name = await AsyncStorage.getItem('userfirstname');
     const last_name = await AsyncStorage.getItem('userlastname');
     setUsername(first_name.concat(' ') + last_name);
   }
 
-  async function get_last_workout() {
+  async function getLastWorkout() {
     const workout = await getLastestWorkout(userid);
     setLastWorkout(workout);
   }
 
-  function format_date() {
+  function formatDate() {
     const current = new Date(Date.parse(lastWorkout));
     const day = new Date(Date.parse(lastWorkout)).toLocaleString('en-us', { weekday: 'long' });
 
@@ -38,7 +40,7 @@ export default function Profile() {
   }
 
   async function doThis() {
-    await get_username();
+    await getUsername();
     await AsyncStorage.getItem('userid').then((id) => setUserid(id || 'kasper'));
   }
 
@@ -50,7 +52,7 @@ export default function Profile() {
     }
 
     try {
-      get_last_workout();
+      getLastWorkout();
     } catch (err) {
       console.error(err);
     }
@@ -60,7 +62,8 @@ export default function Profile() {
     doThis();
   }, []);
   return (
-    <View style={{ height: '100%', backgroundColor: '#292727' }}>
+    <View style={{ height: '100%', backgroundColor: '#292727', position: 'relative' }}>
+      <Settings open={open} close={() => setOpen(false)} />
       <View
         style={{
           height: '4%',
@@ -71,30 +74,36 @@ export default function Profile() {
         }}
       >
         <View style={{ width: '100%' }}>
-          <Image
-            style={{
-              width: '7.5%',
-              height: '100%',
-              tintColor: 'white',
-              alignSelf: 'flex-end',
-            }}
-            source={{
-              uri: '../../assets/settings_icon.svg',
-            }}
-          />
+          <Pressable style={{ width: '7.5%', height: '50%', alignSelf: 'flex-end' }} onPress={() => setOpen(true)}>
+            <Image
+              style={{
+                width: '100%',
+                height: '100%',
+                tintColor: 'white',
+              }}
+              source={{
+                uri: '../../assets/settings_icon.svg',
+              }}
+            />
+          </Pressable>
         </View>
       </View>
-      <View style={{ gap: 8 }}>
-        <Text style={{ fontSize: 22, justifyContent: 'center', display: 'flex', color: 'white' }}> {username} </Text>
-        <Text style={{ fontSize: 16, justifyContent: 'center', display: 'flex', color: 'white' }}>
-          Last workout: {format_date()}
+      <View style={{ gap: 8, height: '86%' }}>
+        <Text style={{ fontSize: 22, justifyContent: 'center', display: 'flex', color: 'white', height: '3%' }}>
+          {' '}
+          {username}{' '}
         </Text>
-        <FlatList
-          style={{}}
-          data={workouts}
-          keyExtractor={(item) => item._id}
-          renderItem={({ item }) => <WorkoutListItem workout={item} />}
-        />
+        <Text style={{ fontSize: 16, justifyContent: 'center', display: 'flex', color: 'white', height: '3%' }}>
+          Last workout: {formatDate()}
+        </Text>
+        <ScrollView style={{ height: '50%' }}>
+          <FlatList
+            style={{}}
+            data={workouts}
+            keyExtractor={(item) => item._id}
+            renderItem={({ item }) => <WorkoutListItem workout={item} />}
+          />
+        </ScrollView>
       </View>
 
       <BottomNavBar newState={[false, true, false, false, false]} />
