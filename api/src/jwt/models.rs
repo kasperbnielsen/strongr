@@ -15,6 +15,24 @@ pub struct RefreshToken {
     pub exp: DateTime,
 }
 
+#[derive(serde::Serialize, serde::Deserialize, Debug)]
+pub struct TokenResponse {
+    pub refreshToken: String,
+    pub userid: String,
+}
+
+#[derive(serde::Serialize, serde::Deserialize, Debug)]
+pub struct RefreshTokenString {
+    pub token: String,
+    pub refreshToken: String,
+}
+
+impl IntoResponse for RefreshTokenString {
+    fn into_response(self) -> axum::response::Response {
+        axum::Json(self).into_response()
+    }
+}
+
 impl IntoResponse for RefreshToken {
     fn into_response(self) -> axum::response::Response {
         axum::Json(self).into_response()

@@ -9,7 +9,7 @@ use jwt::logic::{refresh_jwt_token, verify_token};
 use tower_http::cors::{Any, CorsLayer};
 use users::handlers::{create_user, get_user_by_id, update_user_by_id};
 use workouts::handlers::{
-    create_workout, delete_workout_by_id, get_user_workouts, get_workout_by_id,
+    create_workout, delete_workout_by_id, get_latest_workout, get_user_workouts, get_workout_by_id,
     update_workout_by_id,
 };
 
@@ -50,6 +50,7 @@ async fn main() {
                 .delete(delete_workout_by_id),
         )
         .route("/users/:user_id/workouts", get(get_user_workouts))
+        .route("/users/:user_id/workout", get(get_latest_workout))
         .layer(axum::middleware::from_fn(verify_token))
         .route("/users", post(create_user))
         .route("/auth", post(authenticate_credentials))

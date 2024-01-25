@@ -1,31 +1,33 @@
 import { Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
-import { WorkoutModel } from '../../types';
+import { ExerciseModel, WorkoutModel } from '../../types';
+import { useEffect, useState } from 'react';
+import { getExercise } from '../../endpoints/exercises';
 
 export default function WorkoutListItem({ workout }: { workout: WorkoutModel }) {
+  const [exerciseId, setExerciseId] = useState<string[]>([]);
+  async function getExerciseName() {
+    const exerciseIds = [];
+
+    workout.exercises.forEach(async (element) => {
+      exerciseIds.push((await getExercise(element.exercise_id))._id);
+    });
+
+    setExerciseId(exerciseIds);
+  }
+
+  useEffect(() => {
+    getExerciseName();
+  }, []);
+
   return (
-    <View>
-      <Text>{workout.title}</Text>
-      <FlatList
-        data={workout.exercises}
-        renderItem={({ item }) => (
-          <View>
-            <Text>{item.note}</Text>
-            <FlatList
-              style={{ paddingBottom: 20 }}
-              data={item.sets}
-              renderItem={({ item }) => (
-                <View style={{ flex: 1, flexDirection: 'row' }}>
-                  <Text style={{ paddingRight: 5 }}>{item.weight}</Text>
-                  <Text style={{ paddingRight: 5 }}>x</Text>
-                  <Text>{item.reps}kg</Text>
-                </View>
-              )}
-            />
-          </View>
-        )}
-      />
+    <View style={{ backgroundColor: 'blue', marginVertical: 8, width: '100%', borderRadius: 5 }}>
+      <View style={{ margin: 10 }}>
+        <Text>{workout.title}</Text>
+        <Text>{exerciseId[0]}</Text>
+      </View>
+      <Text>{workout.note}</Text>
     </View>
   );
 }

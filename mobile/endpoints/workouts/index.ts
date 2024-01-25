@@ -14,3 +14,7 @@ export async function getWorkouts(userId: string) {
 export async function createWorkout(input: Omit<WorkoutModel, '_id'>) {
   return axios.post(`${API_BASE_URL}/workouts`, JSON.parse(JSON.stringify(input)));
 }
+
+export async function getLastestWorkout(userId: string) {
+  return axios.get(`${API_BASE_URL}/users/${userId}/workout`).then(responseAxios<string>);
+}

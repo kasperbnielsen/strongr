@@ -17,14 +17,14 @@ use uuid::Uuid;
 
 use crate::{authentication::handlers::get_collection, error::ApiError};
 
-use super::models::{Claims, RefreshToken};
+use super::models::{Claims, RefreshToken, RefreshTokenString, TokenResponse};
 
 pub async fn encode_token(issuer: &str) -> Result<String, ApiError> {
     let secret = dotenv::var("JWT_SECRET").expect("JWT_SECRET not set!");
 
     let mut time = Utc::now();
     let iat = time.timestamp() as usize;
-    let expiration_duration = Duration::seconds(6000);
+    let expiration_duration = Duration::seconds(60 * 15);
     time += expiration_duration;
     let exp = time.timestamp() as usize;
     let claim = Claims {
@@ -85,22 +85,29 @@ pub async fn encode_refresh_token(user_id: ObjectId) -> Result<RefreshToken, Api
 
 pub async fn refresh_jwt_token(
     State(database): State<mongodb::Client>,
-    Json(payload): Json<(String, String)>,
-) -> Result<String, ApiError> {
+    Json(payload): Json<TokenResponse>,
+) -> Result<RefreshTokenString, ApiError> {
     let collection: Collection<RefreshToken> = get_collection(database, "refresh");
 
-    let new_token = encode_refresh_token(ObjectId::from_str(&payload.0)?).await?;
+    let new_token = encode_refresh_token(ObjectId::from_str(&payload.userid)?).await?;
 
     let token = collection
         .find_one_and_update(
-            doc! {"token": payload.1, "exp": {"$gte": DateTime::now()}},
-            doc! {"token": new_token.token, "exp": new_token.exp},
+            doc! {"token": payload.refreshToken, "exp": {"$gte": DateTime::now()}},
+            doc! { "$set": doc! {"token": &new_token.token, "exp": new_token.exp}},
             None,
         )
         .await?;
 
+    println!("{:?}", token);
+
     if let Some(token) = token {
-        return encode_token(&token.user_id.to_hex()).await;
+        let result = RefreshTokenString {
+            token: encode_token(&token.user_id.to_hex()).await?,
+            refreshToken: new_token.token,
+        };
+
+        return Ok(result);
     }
 
     Err(ApiError::Unauthorized(StatusCode::UNAUTHORIZED))

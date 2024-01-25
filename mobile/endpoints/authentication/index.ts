@@ -19,12 +19,14 @@ export async function AuthenticateSession(jwtToken: string) {
   return await response;
 }
 
-export async function RefreshToken(refreshToken: string): Promise<string> {
+export async function RefreshToken(refreshToken: string): Promise<{ token: string; refreshToken: string }> {
   const userid = await AsyncStorage.getItem('userid');
-  const result: { token: string } = await axios.post(`${API_BASE_URL}/refresh`, {
-    refreshToken,
-    userid,
-  });
+  const token = await axios
+    .post(`${API_BASE_URL}/refresh`, {
+      refreshToken,
+      userid,
+    })
+    .then((result: AxiosResponse<{ token: string; refreshToken: string }>) => result.data);
 
-  return result.token;
+  return token;
 }

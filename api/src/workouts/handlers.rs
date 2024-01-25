@@ -8,9 +8,11 @@ use axum::{
 
 use axum_auth::AuthBearer;
 
+use chrono::DateTime;
 use futures::StreamExt;
 use mongodb::{
     bson::{doc, oid::ObjectId},
+    options::FindOneOptions,
     results::InsertOneResult,
     Collection,
 };
@@ -78,6 +80,22 @@ pub async fn get_workout_by_id(
         .find_one(doc! {"_id": ObjectId::from_str(workout_id.as_str())?}, None)
         .await?
         .map_or(Err(ApiError::ResourceNotFound), |x| Ok(x.into()))
+}
+
+pub async fn get_latest_workout(
+    State(database): State<mongodb::Client>,
+    user_id: Path<String>,
+) -> Result<String, ApiError> {
+    get_collection::<WorkoutModel>(database)
+        .find_one(
+            doc! {"user_id": ObjectId::from_str(&user_id)?},
+            FindOneOptions::builder().sort(doc! {"_id": -1}).build(),
+        )
+        .await?
+        .map_or(Err(ApiError::ResourceNotFound), |res| {
+            println!("{:?}", res.started_at.to_chrono().to_string());
+            Ok(res.started_at.to_chrono().to_string())
+        })
 }
 
 pub async fn update_workout_by_id(
