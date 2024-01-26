@@ -1,29 +1,131 @@
-use axum::extract::Path;
+use core::str::FromStr;
 
-use super::models::{CreateExerciseInput, UpdateExerciseInput};
+use axum::{
+    extract::{Path, State},
+    http::StatusCode,
+    Json,
+};
+use futures::{StreamExt, TryStreamExt};
+use mongodb::{
+    bson::{doc, oid::ObjectId},
+    results::InsertOneResult,
+};
 
-pub async fn get_exercises() {
-    todo!()
+use crate::error::ApiError;
+
+use super::models::{
+    CreateExerciseInput, ExerciseList, ExerciseModel, ExerciseModelWithoutId, ExerciseOutput,
+    ExerciseOutputList, UpdateExerciseInput,
+};
+pub fn get_collection<T>(database: mongodb::Client) -> mongodb::Collection<T> {
+    database.database("strongr").collection::<T>("exercises")
+}
+
+pub async fn get_exercises(
+    State(database): State<mongodb::Client>,
+) -> Result<ExerciseOutputList, ApiError> {
+    let collection: mongodb::Collection<ExerciseModel> = get_collection(database);
+
+    let mut cursor = collection.find(doc! {}, None).await?;
+
+    let mut rows: Vec<ExerciseOutput> = Vec::new();
+
+    while let Some(Ok(doc)) = cursor.next().await {
+        rows.push(doc.into());
+    }
+
+    let result = ExerciseOutputList { list: rows };
+
+    Ok(result)
+}
+
+pub async fn create_exercise_for_user(
+    State(database): State<mongodb::Client>,
+    user_id: Path<String>,
+    Json(payload): Json<CreateExerciseInput>,
+) -> Result<(StatusCode, Json<InsertOneResult>), ApiError> {
+    let collection = get_collection(database);
+
+    let exercise = ExerciseModelWithoutId {
+        title: payload.title,
+        description: payload.description,
+        exercise_type: payload.exercise_type,
+        user_id: Some(ObjectId::from_str(&user_id)?),
+    };
+
+    collection
+        .insert_one(exercise, None)
+        .await
+        .map(|value| (StatusCode::CREATED, axum::Json(value)))
+        .map_err(ApiError::from)
 }
 
 pub async fn create_exercise(
     State(database): State<mongodb::Client>,
     Json(payload): Json<CreateExerciseInput>,
-) {
-    todo!()
+) -> Result<StatusCode, ApiError> {
+    let collection = get_collection(database);
+
+    let exercise = ExerciseModelWithoutId {
+        title: payload.title,
+        description: payload.description,
+        exercise_type: payload.exercise_type,
+        user_id: None,
+    };
+
+    collection.insert_one(exercise, None).await?;
+
+    Ok(StatusCode::OK)
+}
+
+pub async fn get_exercise_by_ids(
+    State(database): State<mongodb::Client>,
+    Json(payload): Json<Vec<String>>,
+) -> Result<ExerciseList, ApiError> {
+    let collection: mongodb::Collection<ExerciseModel> = get_collection(database);
+
+    let temp: Vec<ObjectId> = payload
+        .into_iter()
+        .filter_map(|id| ObjectId::from_str(&id).ok())
+        .collect();
+
+    let result = collection.find(doc! {"_id": {"$in": temp}}, None).await?;
+
+    let list: Vec<ExerciseModel> = result.try_collect().await?;
+
+    Ok(ExerciseList { list })
 }
 
 pub async fn get_exercise_by_id(
     State(database): State<mongodb::Client>,
     exercise_id: Path<String>,
-) {
-    todo!()
+) -> Result<ExerciseOutput, ApiError> {
+    let collection: mongodb::Collection<ExerciseModel> = get_collection(database);
+
+    let result = collection
+        .find_one(
+            doc! {"_id": ObjectId::from_str(&exercise_id.to_string())?},
+            None,
+        )
+        .await?;
+
+    Ok(result.unwrap().into())
 }
 
 pub async fn update_exercise_by_id(
     State(database): State<mongodb::Client>,
     exercise_id: Path<String>,
     Json(payload): Json<UpdateExerciseInput>,
-) {
-    todo!()
+) -> Result<StatusCode, ApiError> {
+    let collection: mongodb::Collection<ExerciseModel> = get_collection(database);
+
+    collection
+        .find_one_and_update(
+            doc! {"_id": ObjectId::from_str(&exercise_id.to_string())?},
+            doc! {"$set": { "title": payload.title, "description": payload.description, "exercise_type": payload.exercise_type as i32 }},
+            None,
+        )
+        .await?;
+
+    Ok(StatusCode::OK)
 }

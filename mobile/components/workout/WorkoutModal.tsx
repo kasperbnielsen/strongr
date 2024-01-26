@@ -1,3 +1,4 @@
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
 
@@ -5,11 +6,11 @@ import SaveWorkoutButton from './SaveWorkoutButton';
 import WorkoutExerciseInput from './WorkoutExerciseInput';
 import WorkoutNoteInput from './WorkoutNoteInput';
 import WorkoutTitleInput from './WorkoutTitleInput';
-import { HARDCODED_USER_ID } from '../../dummy';
 import { getExercises } from '../../endpoints/exercises';
 import { createWorkout } from '../../endpoints/workouts';
-import { ExerciseEntity, SetType, WorkoutEntity, WorkoutEntityExercise, WorkoutEntityExerciseSet } from '../../types';
+import { ExerciseModel, SetType, WorkoutModel, WorkoutModelExercise, WorkoutModelExerciseSet } from '../../types';
 import ExerciseInputModal from '../exercise/ExerciseInputModal';
+import NewExercise from '../exercise/NewExercise';
 
 function generateWorkoutTitle() {
   const localHour = new Date().getHours();
@@ -23,7 +24,7 @@ function generateWorkoutTitle() {
 
 export default function WorkoutModal() {
   // TODO: move to global state
-  const [exercises, setExercises] = useState<ExerciseEntity[]>([]);
+  const [exercises, setExercises] = useState<ExerciseModel[]>([]);
 
   const [title, setTitle] = useState(generateWorkoutTitle());
 
@@ -31,10 +32,21 @@ export default function WorkoutModal() {
 
   const [startedAt] = useState(new Date());
 
-  const [workoutExercises, setWorkoutExercises] = useState<WorkoutEntity['exercises']>([]);
+  const [userId, setUserId] = useState<string>();
+
+  const [showExercise, setShowExercise] = useState(false);
+
+  const [workoutExercises, setWorkoutExercises] = useState<WorkoutModel['exercises']>([]);
+  const getData = async () => {
+    const value = await AsyncStorage.getItem('userid');
+    if (value !== null) {
+      setUserId(value);
+    }
+  };
 
   useEffect(() => {
     getExercises().then(setExercises);
+    getData();
   }, []);
 
   async function save() {
@@ -45,8 +57,7 @@ export default function WorkoutModal() {
     await createWorkout({
       title: trimmedTitle,
       note: note?.trim() ?? '',
-      // TODO: get from global state
-      user_id: HARDCODED_USER_ID,
+      user_id: userId,
       started_at: startedAt,
       finished_at: new Date(),
       exercises: workoutExercises,
@@ -59,14 +70,14 @@ export default function WorkoutModal() {
     setWorkoutExercises(clone);
   }
 
-  function updateExercise(index: number, e: WorkoutEntityExercise) {
+  function updateExercise(index: number, e: WorkoutModelExercise) {
     const clone = workoutExercises.slice();
     clone.splice(index, 1, e);
     setWorkoutExercises(clone);
   }
 
-  function addExercise(exercise: ExerciseEntity) {
-    const set: WorkoutEntityExerciseSet = { set_type: SetType.Default, time: 0, finished: false, weight: 0, reps: 0 };
+  function addExercise(exercise: ExerciseModel) {
+    const set: WorkoutModelExerciseSet = { set_type: SetType.DropSet, time: 0, weight: 0, reps: 0 };
 
     setWorkoutExercises([
       ...workoutExercises,
@@ -79,8 +90,8 @@ export default function WorkoutModal() {
   const [showExerciseModal, setShowExerciseModal] = useState(false);
 
   return (
-    <View>
-      <View style={{ flex: 1, flexDirection: 'row', height: 'auto', gap: 10 }}>
+    <View style={{}}>
+      <View style={{ flex: 1, flexDirection: 'row', height: 'auto', gap: 10, backgroundColor: '#292727' }}>
         <WorkoutTitleInput title={title} setTitle={setTitle} />
 
         <SaveWorkoutButton onClick={save} />
@@ -103,7 +114,8 @@ export default function WorkoutModal() {
       ) : (
         false
       )}
-
+      <Pressable onPress={() => setShowExercise(true)}>New Exercise</Pressable>
+      <NewExercise visible={showExercise} close={() => {}} />
       <Pressable
         onPress={() => setShowExerciseModal(true)}
         style={{ backgroundColor: 'green', width: '100%', marginTop: 32 }}

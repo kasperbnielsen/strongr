@@ -1,0 +1,9 @@
+{
+  "rust-analyzer.linkedProjects": [
+    ".\\api\\Cargo.toml",
+    ".\\api\\Cargo.toml",
+    ".\\api\\Cargo.toml",
+    ".\\api\\Cargo.toml"
+  ],
+  "nuxt.isNuxtApp": false
+}

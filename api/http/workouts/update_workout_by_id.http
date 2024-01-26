@@ -1,0 +1,16 @@
+PUT http://localhost:3000/workouts/655a1372a19229cee0b4cde3
+content-type:application/json
+
+{
+  "title": "123",
+  "note": "sup 123",
+  "exercises": [
+    {
+      "exercise_id": "123456789012111222333444",
+      "note": "123",
+      "sets": [{ "set_type": "Default", "weight": 1, "reps": 1, "time": 1 }]
+    }
+  ],
+  "started_at": "2023-11-14T21:29:26.898Z",
+  "finished_at": "2012-04-23T18:25:43.511Z"
+}

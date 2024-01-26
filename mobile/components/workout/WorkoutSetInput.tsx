@@ -1,6 +1,6 @@
 import { Button, Text, TextInput, View } from 'react-native';
 
-import { ExerciseType, WorkoutEntityExerciseSet } from '../../types';
+import { ExerciseType, WorkoutModelExerciseSet } from '../../types';
 
 export default function WorkoutSetInput({
   index,
@@ -10,9 +10,9 @@ export default function WorkoutSetInput({
   deleteSet,
 }: {
   index: number;
-  set: WorkoutEntityExerciseSet;
+  set: WorkoutModelExerciseSet;
   exerciseType: ExerciseType;
-  updateSet: (set: WorkoutEntityExerciseSet) => void;
+  updateSet: (set: WorkoutModelExerciseSet) => void;
   deleteSet: () => void;
 }) {
   const cleanInput = (input: string) => {
