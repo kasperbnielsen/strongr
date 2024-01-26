@@ -1,24 +1,25 @@
 import { useEffect, useState } from 'react';
-import { ScrollView, Text, View } from 'react-native';
+import { Text, View } from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 
-import { getExercise } from '../../endpoints/exercises';
+import { getExerciseList } from '../../endpoints/exercises';
 import { ExerciseModel, WorkoutModel } from '../../types';
 
 export default function WorkoutListItem({ workout }: { workout: WorkoutModel }) {
-  const [exerciseId, setExerciseId] = useState<string[]>([]);
-  async function getExerciseName() {
-    const exerciseIds = [];
+  const [names, setNames] = useState<ExerciseModel[]>([]);
 
-    workout.exercises.forEach(async (element) => {
-      exerciseIds.push((await getExercise(element.exercise_id.$oid)).title);
+  async function getNames() {
+    const list = [];
+    workout.exercises.forEach((element) => {
+      list.push(element.exercise_id.$oid);
     });
+    const result = await getExerciseList(list);
 
-    return exerciseIds;
+    return result;
   }
 
   useEffect(() => {
-    getExerciseName().then(setExerciseId);
+    getNames().then(setNames);
   }, []);
 
   return (
@@ -28,7 +29,11 @@ export default function WorkoutListItem({ workout }: { workout: WorkoutModel }) 
           <Text style={{ width: '75%' }}>{workout.title}</Text>
           <Text style={{ width: '25%' }}>asd</Text>
         </View>
-        <FlatList data={exerciseId} keyExtractor={(item) => item} renderItem={({ item }) => <Text>{item}</Text>} />
+        <FlatList
+          data={names}
+          keyExtractor={(item) => item.title}
+          renderItem={({ item }) => <Text>{item.title}</Text>}
+        />
       </View>
       <Text>{workout.note}</Text>
     </View>

@@ -34,6 +34,16 @@ impl IntoResponse for ExerciseOutputList {
     }
 }
 
+pub struct ExerciseList {
+    pub list: Vec<ExerciseModel>,
+}
+
+impl IntoResponse for ExerciseList {
+    fn into_response(self) -> axum::response::Response {
+        axum::Json(self.list).into_response()
+    }
+}
+
 #[derive(serde::Deserialize, serde::Serialize, Debug)]
 pub struct ExerciseOutput {
     #[serde(with = "hex_string_as_object_id")]

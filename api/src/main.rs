@@ -2,8 +2,8 @@ use authentication::handlers::authenticate_credentials;
 use axum::routing::{get, post};
 use database::setup_database_client;
 use exercises::handlers::{
-    create_exercise, create_exercise_for_user, get_exercise_by_id, get_exercises,
-    update_exercise_by_id,
+    create_exercise, create_exercise_for_user, get_exercise_by_id, get_exercise_by_ids,
+    get_exercises, update_exercise_by_id,
 };
 use jwt::logic::{refresh_jwt_token, verify_token};
 use tower_http::cors::{Any, CorsLayer};
@@ -43,6 +43,7 @@ async fn main() {
             "/exercises/:exercise_id",
             get(get_exercise_by_id).put(update_exercise_by_id),
         )
+        .route("/exercises/list", post(get_exercise_by_ids))
         .route(
             "/workouts/:workout_id",
             get(get_workout_by_id)

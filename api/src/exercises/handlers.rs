@@ -5,7 +5,7 @@ use axum::{
     http::StatusCode,
     Json,
 };
-use futures::StreamExt;
+use futures::{StreamExt, TryStreamExt};
 use mongodb::{
     bson::{doc, oid::ObjectId},
     results::InsertOneResult,
@@ -14,8 +14,8 @@ use mongodb::{
 use crate::error::ApiError;
 
 use super::models::{
-    CreateExerciseInput, ExerciseModel, ExerciseModelWithoutId, ExerciseOutput, ExerciseOutputList,
-    UpdateExerciseInput,
+    CreateExerciseInput, ExerciseList, ExerciseModel, ExerciseModelWithoutId, ExerciseOutput,
+    ExerciseOutputList, UpdateExerciseInput,
 };
 pub fn get_collection<T>(database: mongodb::Client) -> mongodb::Collection<T> {
     database.database("strongr").collection::<T>("exercises")
@@ -76,6 +76,24 @@ pub async fn create_exercise(
     collection.insert_one(exercise, None).await?;
 
     Ok(StatusCode::OK)
+}
+
+pub async fn get_exercise_by_ids(
+    State(database): State<mongodb::Client>,
+    Json(payload): Json<Vec<String>>,
+) -> Result<ExerciseList, ApiError> {
+    let collection: mongodb::Collection<ExerciseModel> = get_collection(database);
+
+    let temp: Vec<ObjectId> = payload
+        .into_iter()
+        .filter_map(|id| ObjectId::from_str(&id).ok())
+        .collect();
+
+    let result = collection.find(doc! {"_id": {"$in": temp}}, None).await?;
+
+    let list: Vec<ExerciseModel> = result.try_collect().await?;
+
+    Ok(ExerciseList { list })
 }
 
 pub async fn get_exercise_by_id(

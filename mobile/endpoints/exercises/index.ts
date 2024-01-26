@@ -18,3 +18,7 @@ export async function createExercise(entity: ExerciseModel) {
     exercise_type: entity.exercise_type,
   });
 }
+
+export async function getExerciseList(ids: string[]) {
+  return axios.post(`${API_BASE_URL}/exercises/list`, ids).then(responseAxios<ExerciseModel[]>);
+}
