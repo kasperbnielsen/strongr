@@ -1,4 +1,4 @@
-import { Button, Text, TextInput, View } from 'react-native';
+import { Button, Pressable, Text, TextInput, View, Image } from 'react-native';
 
 import { ExerciseType, WorkoutModelExerciseSet } from '../../types';
 
@@ -28,7 +28,7 @@ export default function WorkoutSetInput({
   }
 
   return (
-    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 4, width: '100%' }}>
+    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
       {/* TODO: switch between set type */}
 
       <Text style={{ fontWeight: '700', fontSize: 18 }}>{index + 1}.</Text>
@@ -49,7 +49,9 @@ export default function WorkoutSetInput({
         onChangeText={(text) => updateSet({ ...set, weight: cleanInput(text) })}
       />
 
-      <Button title='🗑️' onPress={deleteSet} />
+      <Pressable onPress={deleteSet}>
+        <Image source={{ uri: '../../assets/delete.svg' }} style={{ width: 12, height: 16 }} />
+      </Pressable>
     </View>
   );
 }

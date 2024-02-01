@@ -1,5 +1,5 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Text, Image, FlatList, ScrollView, Pressable } from 'react-native';
 import { View } from 'tamagui';
 
@@ -64,49 +64,52 @@ export default function Profile() {
   return (
     <View style={{ height: '100%', backgroundColor: '#292727', position: 'relative' }}>
       <Settings open={open} close={() => setOpen(false)} />
-      <View
-        style={{
-          height: '4%',
-          display: 'flex',
-          flexDirection: 'row',
-          margin: 24,
-          alignContent: 'center',
-        }}
-      >
-        <View style={{ width: '100%' }}>
-          <Pressable style={{ width: '7.5%', height: '50%', alignSelf: 'flex-end' }} onPress={() => setOpen(true)}>
-            <Image
-              style={{
-                width: '100%',
-                height: '100%',
-                tintColor: 'white',
-              }}
-              source={{
-                uri: '../../assets/settings_icon.svg',
-              }}
-            />
-          </Pressable>
+      <View style={{ height: '90%' }}>
+        <View
+          style={{
+            height: '15%',
+            display: 'flex',
+            flexDirection: 'row',
+            margin: 24,
+            alignContent: 'center',
+          }}
+        >
+          <View style={{ width: '100%' }}>
+            <Pressable style={{ width: '7.5%', height: '15%', alignSelf: 'flex-end' }} onPress={() => setOpen(true)}>
+              <Image
+                style={{
+                  width: 24,
+                  height: 24,
+                  tintColor: 'white',
+                }}
+                source={{
+                  uri: '../../assets/settings_icon.svg',
+                }}
+              />
+            </Pressable>
+            <View style={{ height: '50%' }}>
+              <Text style={{ fontSize: 22, justifyContent: 'center', display: 'flex', color: 'white', height: '100%' }}>
+                {' '}
+                {username}{' '}
+              </Text>
+              <Text style={{ fontSize: 16, justifyContent: 'center', display: 'flex', color: 'white', height: '100%' }}>
+                Last workout: {formatDate()}
+              </Text>
+            </View>
+          </View>
         </View>
-      </View>
-      <View style={{ gap: 8, height: '86%' }}>
-        <Text style={{ fontSize: 22, justifyContent: 'center', display: 'flex', color: 'white', height: '3%' }}>
-          {' '}
-          {username}{' '}
-        </Text>
-        <Text style={{ fontSize: 16, justifyContent: 'center', display: 'flex', color: 'white', height: '3%' }}>
-          Last workout: {formatDate()}
-        </Text>
-        <ScrollView style={{ height: '50%' }}>
+
+        <View style={{ gap: 8, paddingBottom: '20%', backgroundColor: '#292727' }}>
           <FlatList
             style={{}}
             data={workouts}
             keyExtractor={(item) => item._id}
             renderItem={({ item }) => <WorkoutListItem workout={item} />}
           />
-        </ScrollView>
+        </View>
       </View>
 
-      <BottomNavBar newState={[false, true, false, false, false]} />
+      <BottomNavBar newState={[false, false, false, false, true]} />
     </View>
   );
 }

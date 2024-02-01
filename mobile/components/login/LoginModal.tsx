@@ -1,15 +1,18 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import React, { useEffect, useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import { TextInput, View, Text, Pressable, ImageBackground } from 'react-native';
 
 import { AuthenticateCredentials } from '../../endpoints/authentication';
 import { UserModel } from '../../types';
+import { stateContext } from '../../app/state';
 const image = { uri: '../../assets/desktop-bg.svg' };
 
 export default function LoginModal({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [model, setModel] = useState<UserModel>(null);
+
+  const dispatcher = useContext(stateContext);
 
   async function submit() {
     const res = await AuthenticateCredentials(email, password);

@@ -6,6 +6,7 @@ import BottomNavBar from '../../components/navbar/BottomNavBar';
 import WorkoutModal from '../../components/workout/WorkoutModal';
 import { getWorkouts } from '../../endpoints/workouts';
 import { WorkoutModel } from '../../types';
+import NewWorkout from '../../components/workout/NewWorkout';
 
 export default function WorkoutOverview() {
   const [workouts, setWorkouts] = useState<WorkoutModel[]>([]);
@@ -27,7 +28,7 @@ export default function WorkoutOverview() {
 
   return (
     <View style={{ height: '100%', backgroundColor: '#292727' }}>
-      <WorkoutModal />
+      <NewWorkout />
       <BottomNavBar newState={[false, false, true, false, false]} />
     </View>
   );

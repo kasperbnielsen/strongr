@@ -1,4 +1,4 @@
-import { Button, FlatList, Pressable, Text, View } from 'react-native';
+import { Button, FlatList, Pressable, Text, View, Image } from 'react-native';
 
 import WorkoutSetInput from './WorkoutSetInput';
 import { ExerciseModel, SetType, WorkoutModelExercise, WorkoutModelExerciseSet } from '../../types';
@@ -45,11 +45,12 @@ export default function WorkoutExerciseInput({
   }
 
   return (
-    <View>
+    <View style={{ gap: 4 }}>
       <View style={{ flex: 1, flexDirection: 'row' }}>
-        <Text>{exercise.title}</Text>
-
-        <Button onPress={remove} title='🗑️' />
+        <Text style={{ width: '90%' }}>{exercise.title}</Text>
+        <Pressable onPress={remove}>
+          <Image source={{ uri: '../../assets/delete.svg' }} style={{ width: 20, height: 24 }} />
+        </Pressable>
       </View>
 
       <FlatList
@@ -66,8 +67,11 @@ export default function WorkoutExerciseInput({
         keyExtractor={(_, index) => index.toString()}
       />
 
-      <Pressable style={{ backgroundColor: 'green', width: '100%', marginTop: 32 }} onPress={addSet}>
-        <Text>Add Set</Text>
+      <Pressable
+        style={{ backgroundColor: 'green', width: '20%', marginTop: 32, alignSelf: 'center' }}
+        onPress={addSet}
+      >
+        <Text style={{ alignSelf: 'center' }}>Add Set</Text>
       </Pressable>
     </View>
   );
