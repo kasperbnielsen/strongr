@@ -1,10 +1,10 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Link } from 'expo-router';
 import { useEffect, useState } from 'react';
-import { View, Text, ScrollView, Image, Pressable } from 'react-native';
+import { View, Text, ScrollView, Image, Pressable, Animated, PanResponder } from 'react-native';
 
 import Summary from './Summary';
-import BottomNavBar from '../navbar/BottomNavBar';
+import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 
 function openProfile(): void {}
 

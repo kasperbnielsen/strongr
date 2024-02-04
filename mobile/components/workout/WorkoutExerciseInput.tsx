@@ -47,7 +47,7 @@ export default function WorkoutExerciseInput({
   return (
     <View style={{ gap: 4 }}>
       <View style={{ flex: 1, flexDirection: 'row' }}>
-        <Text style={{ width: '90%' }}>{exercise.title}</Text>
+        <Text style={{ width: '90%' }}>{exercise?.title}</Text>
         <Pressable onPress={remove}>
           <Image source={{ uri: '../../assets/delete.svg' }} style={{ width: 20, height: 24 }} />
         </Pressable>
@@ -58,7 +58,7 @@ export default function WorkoutExerciseInput({
         renderItem={({ item, index }) => (
           <WorkoutSetInput
             index={index}
-            exerciseType={exercise.exercise_type}
+            exerciseType={exercise?.exercise_type}
             set={item}
             updateSet={(set) => updateSet(set, index)}
             deleteSet={() => deleteSet(index)}

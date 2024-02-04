@@ -9,6 +9,9 @@ import { Link } from 'expo-router';
 import { WorkoutModel } from '../../types';
 import WorkoutListItem from '../../components/workout/WorkoutListItem';
 import Settings from '../../components/profile/Settings';
+import Fab from '../../components/floatingbutton/fab';
+import WorkoutModal from '../../components/workout/WorkoutModal';
+import { UseDispatch } from '../state';
 
 export default function Profile() {
   const [username, setUsername] = useState('');
@@ -16,6 +19,9 @@ export default function Profile() {
   const [lastWorkout, setLastWorkout] = useState('');
   const [workouts, setWorkouts] = useState<WorkoutModel[]>();
   const [open, setOpen] = useState<boolean>(false);
+  const [visible, setVisible] = useState(false);
+
+  const dispatcher = new UseDispatch();
 
   async function getUsername() {
     const first_name = await AsyncStorage.getItem('userfirstname');
@@ -42,6 +48,14 @@ export default function Profile() {
   async function doThis() {
     await getUsername();
     await AsyncStorage.getItem('userid').then((id) => setUserid(id || 'kasper'));
+  }
+
+  function openWorkout() {
+    return dispatcher.getState().workouts !== null ? (
+      <WorkoutModal visible={visible} close={() => setVisible(false)} workouts={dispatcher.getState().workouts} />
+    ) : (
+      <></>
+    );
   }
 
   useEffect(() => {
@@ -108,7 +122,8 @@ export default function Profile() {
           />
         </View>
       </View>
-
+      <Fab open={() => setVisible(true)} />
+      {openWorkout()}
       <BottomNavBar newState={[false, false, false, false, true]} />
     </View>
   );

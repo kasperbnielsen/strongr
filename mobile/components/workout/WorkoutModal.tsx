@@ -11,6 +11,8 @@ import { createWorkout } from '../../endpoints/workouts';
 import { ExerciseModel, SetType, WorkoutModel, WorkoutModelExercise, WorkoutModelExerciseSet } from '../../types';
 import ExerciseInputModal from '../exercise/ExerciseInputModal';
 import NewExercise from '../exercise/NewExercise';
+import { getState } from 'tamagui';
+import { UseDispatch } from '../../app/state';
 
 function generateWorkoutTitle() {
   const localHour = new Date().getHours();
@@ -22,7 +24,15 @@ function generateWorkoutTitle() {
   return 'Workout';
 }
 
-export default function WorkoutModal({ visible, close }: { visible: boolean; close: () => void }) {
+export default function WorkoutModal({
+  visible,
+  close,
+  workouts,
+}: {
+  visible: boolean;
+  close: () => void;
+  workouts: WorkoutModel | null;
+}) {
   // TODO: move to global state
   const [exercises, setExercises] = useState<ExerciseModel[]>([]);
 
@@ -30,11 +40,13 @@ export default function WorkoutModal({ visible, close }: { visible: boolean; clo
 
   const [note, setNote] = useState('');
 
-  const [startedAt] = useState(new Date());
+  const [startedAt, setStartedAt] = useState(new Date());
 
   const [userId, setUserId] = useState<string>();
 
   const [showExercise, setShowExercise] = useState(false);
+
+  const dispatcher = new UseDispatch();
 
   const [workoutExercises, setWorkoutExercises] = useState<WorkoutModel['exercises']>([]);
   const getData = async () => {
@@ -45,8 +57,17 @@ export default function WorkoutModal({ visible, close }: { visible: boolean; clo
   };
 
   useEffect(() => {
-    getExercises().then(setExercises);
     getData();
+    if (workouts !== null) {
+      console.log(workouts);
+      const data: { title: string; note: string; exercises: WorkoutModelExercise[]; started_at: Date } = workouts;
+      setTitle(data.title);
+      setNote(data.note);
+      setWorkoutExercises(data.exercises ?? []);
+      setStartedAt(data.started_at);
+    } else {
+      getExercises().then(setExercises);
+    }
   }, []);
 
   async function save() {
@@ -62,6 +83,17 @@ export default function WorkoutModal({ visible, close }: { visible: boolean; clo
       finished_at: new Date(),
       exercises: workoutExercises,
     });
+  }
+
+  function closeModal() {
+    dispatcher.tryDispatch(2, {
+      title: title?.trim() ?? '',
+      note: note?.trim() ?? '',
+      exercises: workoutExercises,
+      started_at: startedAt,
+    });
+
+    close();
   }
 
   function removeExercise(index: number) {
@@ -109,7 +141,7 @@ export default function WorkoutModal({ visible, close }: { visible: boolean; clo
               )}
             />
           ) : (
-            false
+            <></>
           )}
           <Pressable
             onPress={() => setShowExerciseModal(true)}
@@ -119,10 +151,15 @@ export default function WorkoutModal({ visible, close }: { visible: boolean; clo
           </Pressable>
         </View>
 
-        <Pressable onPress={() => setShowExercise(true)}>New Exercise</Pressable>
+        <Pressable onPress={() => setShowExercise(true)}>
+          <Text>New Exercise</Text>
+        </Pressable>
         <NewExercise visible={showExercise} close={() => {}} />
 
         <SaveWorkoutButton onClick={save} />
+        <Pressable onPress={closeModal}>
+          <Text>Close</Text>
+        </Pressable>
 
         <ExerciseInputModal
           visible={showExerciseModal}

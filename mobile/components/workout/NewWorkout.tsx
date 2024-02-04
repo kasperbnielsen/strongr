@@ -1,15 +1,13 @@
-import { Pressable } from 'react-native';
-import { Gesture } from 'react-native-gesture-handler';
-import { View, Text } from 'tamagui';
-import WorkoutModal from './WorkoutModal';
 import { useState } from 'react';
+import { Pressable } from 'react-native';
+import { View, Text } from 'tamagui';
 
-function openEmptyWorkout() {
-  return null;
-}
+import WorkoutModal from './WorkoutModal';
+import { UseDispatch } from '../../app/state';
 
 export default function NewWorkout() {
   const [visible, setVisible] = useState(false);
+  const dispatcher = new UseDispatch();
 
   return (
     <View style={{ height: '100%' }}>
@@ -25,8 +23,8 @@ export default function NewWorkout() {
         onPress={() => setVisible(true)}
       >
         <Text style={{ fontWeight: '400', color: 'white', alignSelf: 'center' }}>New Empty Workout</Text>
+        <WorkoutModal visible={visible} close={() => setVisible(false)} workouts={null} />
       </Pressable>
-      <WorkoutModal visible={visible} close={() => setVisible(false)} />
     </View>
   );
 }
