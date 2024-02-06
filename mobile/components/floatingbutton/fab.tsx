@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import { Animated, Dimensions, PanResponder, View, useAnimatedValue, Text, Pressable } from 'react-native';
 import { TouchableWithoutFeedback } from 'react-native-gesture-handler';
 import { UseDispatch } from '../../app/state';
+import Timer from '../stopwatch/Timer';
 
 export default function Fab({ open }: { open: () => void }) {
   const dispatcher = new UseDispatch();
@@ -29,17 +30,9 @@ export default function Fab({ open }: { open: () => void }) {
       },
     ]),
     onPanResponderRelease: (evt, gestureState) => {
-      if (gestureState.dx > gestureState.dy / 2) {
-        console.log(gestureState.dx);
-        Animated.spring(pos, { toValue: { x: gestureState.dx, y: 0 }, useNativeDriver: false }).start();
-      } else {
-        Animated.spring(pos, {
-          toValue: { x: gestureState.dx, y: gestureState.dy },
-          useNativeDriver: false,
-        }).start();
-      }
       pos.flattenOffset();
       dispatcher.tryDispatch(3, pos);
+      Animated.spring(pos, { toValue: { x: gestureState.dx, y: 0 }, useNativeDriver: false }).start();
     },
   });
   return dispatcher.getState().workouts !== null ? (
@@ -57,7 +50,7 @@ export default function Fab({ open }: { open: () => void }) {
           {...panResponder.panHandlers}
         >
           <Animated.Text style={{ position: 'absolute' }}>
-            <Text>Hello</Text>
+            <Timer startTime={dispatcher.getState().workouts.started_at} />
           </Animated.Text>
         </Animated.View>
       </Pressable>

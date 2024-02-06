@@ -13,6 +13,7 @@ import ExerciseInputModal from '../exercise/ExerciseInputModal';
 import NewExercise from '../exercise/NewExercise';
 import { getState } from 'tamagui';
 import { UseDispatch } from '../../app/state';
+import Timer from '../stopwatch/Timer';
 
 function generateWorkoutTitle() {
   const localHour = new Date().getHours();
@@ -167,6 +168,7 @@ export default function WorkoutModal({
           close={() => setShowExerciseModal(false)}
           addExercise={addExercise}
         />
+        <Timer startTime={new Date()} />
       </View>
     </Modal>
   );
