@@ -60,7 +60,6 @@ export default function WorkoutModal({
   useEffect(() => {
     getData();
     if (workouts !== null) {
-      console.log(workouts);
       const data: { title: string; note: string; exercises: WorkoutModelExercise[]; started_at: Date } = workouts;
       setTitle(data.title);
       setNote(data.note);

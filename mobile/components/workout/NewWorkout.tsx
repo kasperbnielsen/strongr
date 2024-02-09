@@ -1,16 +1,16 @@
 import { useState } from 'react';
-import { FlatList, Pressable, Text } from 'react-native';
-import { View } from 'tamagui';
+import { FlatList, Pressable, Text, Image, View } from 'react-native';
 
 import WorkoutModal from './WorkoutModal';
 import { UseDispatch } from '../../app/state';
 import Fab from '../floatingbutton/fab';
 import TemplateCard from './TemplateCard';
-import { Link } from 'expo-router';
+import NewRoutine from '../routines/NewRoutine';
 
 export default function NewWorkout() {
   const [visible, setVisible] = useState(false);
   const dispatcher = new UseDispatch();
+  const [routineVisible, setRoutineVisible] = useState(false);
 
   const [savedVisible, setSavedVisible] = useState(false);
   const [templates, setTemplates] = useState<{ title: string; exercises: string[] }[]>([
@@ -58,7 +58,26 @@ export default function NewWorkout() {
         <WorkoutModal visible={visible} close={() => setVisible(false)} workouts={null} />
       </Pressable>
       <View style={{ padding: 24, gap: 12 }}>
-        <Text style={{ fontSize: 24, color: 'white' }}>Routines</Text>
+        <View style={{ flex: 2, flexDirection: 'row' }}>
+          <Text style={{ fontSize: 24, color: 'white', width: '75%', alignSelf: 'center' }}>Routines</Text>
+          <Pressable
+            style={{
+              flexDirection: 'row',
+              borderStyle: 'solid',
+              borderWidth: 1,
+              borderColor: 'white',
+              borderRadius: 10,
+              backgroundColor: 'grey',
+            }}
+            onPress={() => setRoutineVisible(true)}
+          >
+            <Text style={{ color: 'white', fontWeight: '600', alignSelf: 'center' }}> New</Text>
+            <Image
+              style={{ width: 24, height: 24, tintColor: 'white', alignSelf: 'center' }}
+              source={{ uri: '../../assets/plus.svg' }}
+            />
+          </Pressable>
+        </View>
         <FlatList
           numColumns={2}
           data={templates.filter((item, index) => index < 6)}
@@ -67,7 +86,7 @@ export default function NewWorkout() {
               <TemplateCard title={item.title} exercises={item.exercises} />
             ) : (
               <Pressable style={{ width: '100%' }} onPress={() => {}}>
-                <TemplateCard title='Create New Routine' exercises={[]} />
+                <TemplateCard title='Show All Routines' exercises={[]} />
               </Pressable>
             )
           }
@@ -75,6 +94,7 @@ export default function NewWorkout() {
       </View>
       <Fab open={() => setSavedVisible(true)} />
       {openWorkout()}
+      <NewRoutine visible={routineVisible} close={() => setRoutineVisible(false)} />
     </View>
   );
 }
