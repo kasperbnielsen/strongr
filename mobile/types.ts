@@ -56,6 +56,16 @@ export interface WorkoutModel {
   title: string;
   note: string;
   exercises: WorkoutModelExercise[];
+  started_at: string;
+  finished_at: string;
+}
+
+export interface WorkoutModelOutput {
+  _id: string;
+  user_id: string;
+  title: string;
+  note: string;
+  exercises: WorkoutModelExercise[];
   started_at: Date;
   finished_at: Date;
 }

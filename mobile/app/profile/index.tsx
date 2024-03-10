@@ -17,7 +17,6 @@ export default function Profile() {
   const [username, setUsername] = useState('');
   const [userid, setUserid] = useState('');
   const [lastWorkout, setLastWorkout] = useState('');
-  const [workouts, setWorkouts] = useState<WorkoutModel[]>();
   const [open, setOpen] = useState<boolean>(false);
   const [visible, setVisible] = useState(false);
 
@@ -59,12 +58,6 @@ export default function Profile() {
   }
 
   useEffect(() => {
-    try {
-      getWorkouts(userid).then(setWorkouts);
-    } catch (err) {
-      console.error(err);
-    }
-
     try {
       getLastWorkout();
     } catch (err) {
@@ -111,15 +104,6 @@ export default function Profile() {
               </Text>
             </View>
           </View>
-        </View>
-
-        <View style={{ gap: 8, paddingBottom: '20%', backgroundColor: '#292727' }}>
-          <FlatList
-            style={{}}
-            data={workouts}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => <WorkoutListItem workout={item} />}
-          />
         </View>
       </View>
       <Fab open={() => setVisible(true)} />

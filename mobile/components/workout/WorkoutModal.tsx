@@ -8,7 +8,14 @@ import WorkoutNoteInput from './WorkoutNoteInput';
 import WorkoutTitleInput from './WorkoutTitleInput';
 import { getExercises } from '../../endpoints/exercises';
 import { createWorkout } from '../../endpoints/workouts';
-import { ExerciseModel, SetType, WorkoutModel, WorkoutModelExercise, WorkoutModelExerciseSet } from '../../types';
+import {
+  ExerciseModel,
+  SetType,
+  WorkoutModel,
+  WorkoutModelExercise,
+  WorkoutModelExerciseSet,
+  WorkoutModelOutput,
+} from '../../types';
 import ExerciseInputModal from '../exercise/ExerciseInputModal';
 import NewExercise from '../exercise/NewExercise';
 import { getState } from 'tamagui';
@@ -32,7 +39,7 @@ export default function WorkoutModal({
 }: {
   visible: boolean;
   close: () => void;
-  workouts: WorkoutModel | null;
+  workouts: WorkoutModelOutput | null;
 }) {
   // TODO: move to global state
   const [exercises, setExercises] = useState<ExerciseModel[]>([]);
