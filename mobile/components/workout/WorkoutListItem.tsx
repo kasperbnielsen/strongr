@@ -66,32 +66,38 @@ export default function WorkoutListItem({ workout, seperator }: { workout: Worko
       )}
       <View
         style={{
-          backgroundColor: 'gray',
+          backgroundColor: 'inherit',
           marginVertical: 8,
           width: '66%',
           minHeight: 100,
           borderRadius: 5,
+          borderColor: 'gray',
+          borderWidth: 1,
           alignSelf: 'center',
         }}
       >
         <View style={{ margin: 10, gap: 10 }}>
           <View style={{ display: 'flex', flexDirection: 'row' }}>
-            <Text style={{ width: '65%' }}>{workout.title}</Text>
+            <Text style={{ width: '65%', color: 'white' }}>{workout.title}</Text>
             <View style={{ width: '35%', flex: 1, flexDirection: 'row' }}>
               <Image
                 source={{ uri: '../../assets/timer.svg' }}
-                style={{ width: 16, height: 16, alignSelf: 'center', marginRight: 6 }}
+                style={{ width: 16, height: 16, alignSelf: 'center', marginRight: 6, tintColor: 'white' }}
               />
-              <Text>{formatTime()}</Text>
+              <Text style={{ color: 'white' }}>{formatTime()}</Text>
             </View>
           </View>
-          <Text style={{ fontWeight: '600' }}>Exercises:</Text>
+
+          <Text style={{ fontWeight: '600', color: 'white' }}>Exercises:</Text>
           <View style={{ display: 'flex', flexDirection: 'row', gap: 24 }}>
             <FlatList
               style={{ width: '80%' }}
               data={names}
+              extraData={workout}
               keyExtractor={(item) => item.title}
-              renderItem={({ item, index }) => <Text>{`${workout.exercises[index].sets.length}x ${item.title}`}</Text>}
+              renderItem={({ item, index }) => (
+                <Text style={{ color: 'white' }}>{`${workout.exercises[index].sets.length}x ${item.title}`}</Text>
+              )}
             />
           </View>
         </View>

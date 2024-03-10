@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FlatList } from 'react-native';
-import { View, Text } from 'tamagui';
+import { FlatList, View, Text } from 'react-native';
 
 import Fab from '../../components/floatingbutton/fab';
 import BottomNavBar from '../../components/navbar/BottomNavBar';
@@ -46,7 +45,7 @@ export default function History() {
 
           <FlatList
             style={{}}
-            data={workouts.reverse()}
+            data={workouts?.reverse()}
             keyExtractor={(item) => item._id}
             renderItem={({ item, index }) => (
               <WorkoutListItem
@@ -55,7 +54,6 @@ export default function History() {
                   index === 0
                     ? true
                     : workouts
-                        .reverse()
                         .slice(0, index)
                         .find(
                           (val) => new Date(val.started_at).toDateString() === new Date(item.started_at).toDateString()
