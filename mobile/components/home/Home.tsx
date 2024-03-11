@@ -20,7 +20,7 @@ export default function Home() {
     getUsername();
   });
   return (
-    <View style={{ height: '90%', backgroundColor: '#292727', width: '100%' }}>
+    <View style={{ height: '100%', backgroundColor: '#292727', width: '100%' }}>
       <ScrollView style={{ height: '100%', width: '100%' }}>
         <View
           style={{

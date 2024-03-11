@@ -7,6 +7,7 @@ import Timer from '../stopwatch/Timer';
 export default function Fab({ open }: { open: () => void }) {
   const dispatcher = new UseDispatch();
   const oldPos = dispatcher.getState().position;
+  const [isVisible, setIsVisible] = useState(false);
 
   const pos = useRef(new Animated.ValueXY({ x: oldPos.x, y: oldPos.y })).current;
   let valueX = 0;
@@ -35,7 +36,12 @@ export default function Fab({ open }: { open: () => void }) {
       Animated.spring(pos, { toValue: { x: gestureState.dx, y: 0 }, useNativeDriver: false }).start();
     },
   });
-  return dispatcher.getState().workouts !== null ? (
+
+  useEffect(() => {
+    setIsVisible(dispatcher.getState().workouts !== null);
+  }, [dispatcher.getState().workouts])
+
+  return isVisible ? (
     <View style={{ position: 'absolute', transform: pos.getTranslateTransform() }}>
       <Pressable style={{ transform: pos.getTranslateTransform() }} onPress={open}>
         <Animated.View
@@ -50,7 +56,7 @@ export default function Fab({ open }: { open: () => void }) {
           {...panResponder.panHandlers}
         >
           <Animated.Text style={{ position: 'absolute' }}>
-            <Timer startTime={dispatcher.getState().workouts.started_at} />
+            <Timer startTime={dispatcher.getState().workouts?.started_at} />
           </Animated.Text>
         </Animated.View>
       </Pressable>

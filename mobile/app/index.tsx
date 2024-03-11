@@ -50,6 +50,7 @@ export default function HomePage() {
     }
   }, []);
 
+
   return (
     <stateContext.Provider value={dispatcher}>
       <TamaguiProvider config={config}>

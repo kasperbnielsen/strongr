@@ -23,7 +23,7 @@ export default function WorkoutPage() {
         style={{ padding: 50 }}
         data={workouts}
         keyExtractor={(item) => item._id}
-        renderItem={({ item }) => <WorkoutListItem workout={item} />}
+        renderItem={({ item }) => <WorkoutListItem workout={item} seperator={false} />}
       />
       <BottomNavBar newState={[false, true, false, false, false]} />
     </View>

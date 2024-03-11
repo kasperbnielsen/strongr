@@ -17,7 +17,7 @@ export default function Routines() {
     );
   }
   return (
-    <View>
+    <View style={{backgroundColor: '#292727', height: '100%'}}>
       <View style={{ height: '90%' }}>
         <Text>Hey</Text>
       </View>

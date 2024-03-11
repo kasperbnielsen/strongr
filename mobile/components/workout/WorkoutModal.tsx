@@ -1,8 +1,8 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-import { FlatList, Modal, Pressable, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
+import Modal from 'react-native-modal'
 
-import SaveWorkoutButton from './SaveWorkoutButton';
 import WorkoutExerciseInput from './WorkoutExerciseInput';
 import WorkoutNoteInput from './WorkoutNoteInput';
 import WorkoutTitleInput from './WorkoutTitleInput';
@@ -73,9 +73,13 @@ export default function WorkoutModal({
       setWorkoutExercises(data.exercises ?? []);
       setStartedAt(data.started_at);
     } else {
-      getExercises().then(setExercises);
+      setTitle(generateWorkoutTitle());
+      setNote('');
+      setWorkoutExercises([]);
+      setStartedAt(new Date());
     }
-  }, []);
+    getExercises().then(setExercises);
+  }, [dispatcher.getState().workouts]);
 
   async function save() {
     const trimmedTitle = title?.trim() ?? '';
@@ -90,6 +94,21 @@ export default function WorkoutModal({
       finished_at: new Date(),
       exercises: workoutExercises,
     });
+
+    dispatcher.tryDispatch(2, null);
+    setTitle(generateWorkoutTitle());
+    setNote('');
+    setWorkoutExercises([]);
+    setStartedAt(new Date());
+
+    close();
+  }
+
+  function cancelWorkout() {
+    
+    close();
+    dispatcher.tryDispatch(2, null);
+
   }
 
   function closeModal() {
@@ -129,52 +148,77 @@ export default function WorkoutModal({
   const [showExerciseModal, setShowExerciseModal] = useState(false);
 
   return (
-    <Modal animationType='slide' visible={visible} onRequestClose={close}>
-      <View style={{ backgroundColor: '#292727', height: '100%' }}>
-        <WorkoutTitleInput title={title} setTitle={setTitle} />
-        <WorkoutNoteInput note={note} setNote={setNote} />
+    <Modal isVisible={visible} onSwipeComplete={() => {
+      closeModal();
+    }} swipeDirection='down'>
+      
+      <View style={{ backgroundColor: '#292727', height: '100%', padding: 12 }}>
 
-        <View style={{ flex: 1 }}>
-          {workoutExercises?.length ? (
-            <FlatList
-              data={workoutExercises}
-              renderItem={({ item, index }) => (
-                <WorkoutExerciseInput
-                  workoutExercise={item}
-                  remove={() => removeExercise(index)}
-                  exercise={exercises.find((e) => e._id === item.exercise_id)}
-                  update={(item) => updateExercise(index, item)}
-                />
-              )}
-            />
-          ) : (
-            <></>
-          )}
-          <Pressable
-            onPress={() => setShowExerciseModal(true)}
-            style={{ backgroundColor: 'green', width: '30%', marginTop: 32, alignSelf: 'center' }}
-          >
-            <Text style={{ color: 'white', textAlign: 'center', fontSize: 16, padding: 4 }}>Add exercise</Text>
+        <View
+            style={{
+              borderStyle: 'solid',
+              borderWidth: 2,
+              borderColor: 'black',
+              top: 0,
+              width: '90%',
+              margin: 6,
+              alignSelf: 'center',
+              borderRadius: 10,
+            }}
+          />
+
+          <View style={{ flex: 2, flexDirection: 'row', width: '100%', height: '10%'}}>
+            <View style={{width: '50%', padding: 12}}>
+              <Pressable onPress={cancelWorkout} style={{backgroundColor: 'red',   paddingVertical: 4, borderRadius: 4, alignSelf: 'flex-start', paddingHorizontal: 12}}><Text style={{color: 'white', fontWeight: '400', alignSelf: 'center'}}> Cancel</Text></Pressable>
+            </View>
+            <View style={{  width: '50%', padding: 12}}>
+              <Pressable onPress={save} style={{backgroundColor: 'green', width: 'auto',  paddingVertical: 4,  borderRadius: 4, alignSelf: 'flex-end', paddingHorizontal: 12}}><Text style={{color: 'white', fontWeight: '400', alignSelf: 'center'}}>Save</Text> </Pressable>
+            </View>
+          </View>
+
+          <View style={{ height: '20%'}}>
+            <WorkoutTitleInput title={title} setTitle={setTitle} />
+            <Timer startTime={startedAt} />
+            <WorkoutNoteInput note={note} setNote={setNote} />
+          </View>
+          
+
+          <View style={{ flex: 1, height: '70%' }}>
+            {workoutExercises?.length ? (
+              <FlatList
+                data={workoutExercises}
+                renderItem={({ item, index }) => (
+                  <WorkoutExerciseInput
+                    workoutExercise={item}
+                    remove={() => removeExercise(index)}
+                    exercise={exercises.find((e) => e._id === item.exercise_id)}
+                    update={(item) => updateExercise(index, item)}
+                  />
+                )}
+              />
+            ) : (
+              <></>
+            )}
+            <Pressable
+              onPress={() => setShowExerciseModal(true)}
+              style={{ backgroundColor: 'green', width: '30%', marginTop: 32, alignSelf: 'center' }}
+            >
+              <Text style={{ color: 'white', textAlign: 'center', fontSize: 16, padding: 4 }}>Add exercise</Text>
+            </Pressable>
+          </View>
+
+          <Pressable onPress={() => setShowExercise(true)}>
+            <Text>New Exercise</Text>
           </Pressable>
-        </View>
+          <NewExercise visible={showExercise} close={() => {}} />
 
-        <Pressable onPress={() => setShowExercise(true)}>
-          <Text>New Exercise</Text>
-        </Pressable>
-        <NewExercise visible={showExercise} close={() => {}} />
 
-        <SaveWorkoutButton onClick={save} />
-        <Pressable onPress={closeModal}>
-          <Text>Close</Text>
-        </Pressable>
-
-        <ExerciseInputModal
-          visible={showExerciseModal}
-          exercises={exercises}
-          close={() => setShowExerciseModal(false)}
-          addExercise={addExercise}
-        />
-        <Timer startTime={new Date()} />
+          <ExerciseInputModal
+            visible={showExerciseModal}
+            exercises={exercises}
+            close={() => setShowExerciseModal(false)}
+            addExercise={addExercise}
+          />
       </View>
     </Modal>
   );
