@@ -28,30 +28,32 @@ export default function WorkoutSetInput({
   }
 
   return (
-    <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', gap: 4 }}>
+    <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center', gap: 4 }}>
       {/* TODO: switch between set type */}
+      {exerciseType === 'Weight' ? <></> : <></>}
 
-      <Text style={{ fontWeight: '700', fontSize: 18 }}>{index + 1}.</Text>
+      <View style={{ flex: 1, flexDirection: 'row', marginVertical: 4, gap: 12 }}>
+        <Text style={{ width: '15%', textAlign: 'center' }}>{index + 1}</Text>
+        <Text style={{ width: '25%', textAlign: 'center' }}>100</Text>
+        <TextInput
+          keyboardType='numeric'
+          inputMode='numeric'
+          value={set?.reps ? set?.reps?.toString() : ''}
+          onChangeText={(text) => updateSet({ ...set, reps: cleanInput(text) })}
+          style={{ width: '25%', backgroundColor: 'darkgray', borderRadius: 4, alignSelf: 'center' }}
+        />
 
-      <TextInput
-        placeholder='Reps'
-        keyboardType='numeric'
-        inputMode='numeric'
-        value={set?.reps ? set?.reps?.toString() : ''}
-        onChangeText={(text) => updateSet({ ...set, reps: cleanInput(text) })}
-      />
-
-      <TextInput
-        placeholder='Weight'
-        keyboardType='numeric'
-        value={set?.weight ? set?.weight?.toString() : ''}
-        inputMode='numeric'
-        onChangeText={(text) => updateSet({ ...set, weight: cleanInput(text) })}
-      />
-
-      <Pressable onPress={deleteSet}>
-        <Image source={{ uri: '../../assets/delete.svg' }} style={{ width: 12, height: 16 }} />
-      </Pressable>
+        <TextInput
+          keyboardType='numeric'
+          value={set?.weight ? set?.weight?.toString() : ''}
+          inputMode='numeric'
+          onChangeText={(text) => updateSet({ ...set, weight: cleanInput(text) })}
+          style={{ width: '25%', backgroundColor: 'darkgray', borderRadius: 4, alignSelf: 'center' }}
+        />
+        <Pressable onPress={deleteSet} style={{ width: '10%', alignSelf: 'center' }}>
+          <Image source={{ uri: '../../assets/delete.svg' }} style={{ width: 12, height: 16 }} />
+        </Pressable>
+      </View>
     </View>
   );
 }

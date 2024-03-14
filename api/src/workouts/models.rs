@@ -1,5 +1,10 @@
 use axum::response::IntoResponse;
-use mongodb::bson::{doc, oid::ObjectId, serde_helpers::hex_string_as_object_id};
+use chrono::Date;
+use mongodb::bson::{
+    doc,
+    oid::ObjectId,
+    serde_helpers::{hex_string_as_object_id, rfc3339_string_as_bson_datetime},
+};
 use typeshare::typeshare;
 
 #[typeshare]
@@ -95,9 +100,12 @@ pub struct WorkoutOutput {
     pub title: String,
     pub note: String,
     pub exercises: Vec<WorkoutModelExercise>,
+    #[serde(with = "mongodb::bson::serde_helpers::bson_datetime_as_rfc3339_string")]
     pub started_at: mongodb::bson::DateTime,
+    #[serde(with = "mongodb::bson::serde_helpers::bson_datetime_as_rfc3339_string")]
     pub finished_at: mongodb::bson::DateTime,
 }
+
 #[derive(serde::Serialize, serde::Deserialize, Debug)]
 pub struct WorkoutOutputWithoutId {
     pub user_id: ObjectId,

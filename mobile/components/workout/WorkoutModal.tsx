@@ -1,16 +1,25 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
-import { FlatList, Modal, Pressable, Text, View } from 'react-native';
+import { FlatList, Pressable, Text, View } from 'react-native';
+import Modal from 'react-native-modal';
 
-import SaveWorkoutButton from './SaveWorkoutButton';
 import WorkoutExerciseInput from './WorkoutExerciseInput';
 import WorkoutNoteInput from './WorkoutNoteInput';
 import WorkoutTitleInput from './WorkoutTitleInput';
+import { UseDispatch } from '../../app/state';
 import { getExercises } from '../../endpoints/exercises';
 import { createWorkout } from '../../endpoints/workouts';
-import { ExerciseModel, SetType, WorkoutModel, WorkoutModelExercise, WorkoutModelExerciseSet } from '../../types';
+import {
+  ExerciseModel,
+  SetType,
+  WorkoutModel,
+  WorkoutModelExercise,
+  WorkoutModelExerciseSet,
+  WorkoutModelOutput,
+} from '../../types';
 import ExerciseInputModal from '../exercise/ExerciseInputModal';
 import NewExercise from '../exercise/NewExercise';
+import Timer from '../stopwatch/Timer';
 
 function generateWorkoutTitle() {
   const localHour = new Date().getHours();
@@ -22,7 +31,15 @@ function generateWorkoutTitle() {
   return 'Workout';
 }
 
-export default function WorkoutModal({ visible, close }: { visible: boolean; close: () => void }) {
+export default function WorkoutModal({
+  visible,
+  close,
+  workouts,
+}: {
+  visible: boolean;
+  close: () => void;
+  workouts: WorkoutModelOutput | null;
+}) {
   // TODO: move to global state
   const [exercises, setExercises] = useState<ExerciseModel[]>([]);
 
@@ -30,11 +47,13 @@ export default function WorkoutModal({ visible, close }: { visible: boolean; clo
 
   const [note, setNote] = useState('');
 
-  const [startedAt] = useState(new Date());
+  const [startedAt, setStartedAt] = useState(new Date());
 
   const [userId, setUserId] = useState<string>();
 
   const [showExercise, setShowExercise] = useState(false);
+
+  const dispatcher = new UseDispatch();
 
   const [workoutExercises, setWorkoutExercises] = useState<WorkoutModel['exercises']>([]);
   const getData = async () => {
@@ -45,11 +64,24 @@ export default function WorkoutModal({ visible, close }: { visible: boolean; clo
   };
 
   useEffect(() => {
-    getExercises().then(setExercises);
     getData();
-  }, []);
+    if (workouts !== null) {
+      const data: { title: string; note: string; exercises: WorkoutModelExercise[]; started_at: Date } = workouts;
+      setTitle(data.title);
+      setNote(data.note);
+      setWorkoutExercises(data.exercises ?? []);
+      setStartedAt(data.started_at);
+    } else {
+      setTitle(generateWorkoutTitle());
+      setNote('');
+      setWorkoutExercises([]);
+      setStartedAt(new Date());
+    }
+    getExercises().then(setExercises);
+  }, [dispatcher.getState().workouts]);
 
   async function save() {
+    if (!workoutExercises.length) return;
     const trimmedTitle = title?.trim() ?? '';
 
     if (!trimmedTitle.length) return;
@@ -62,6 +94,30 @@ export default function WorkoutModal({ visible, close }: { visible: boolean; clo
       finished_at: new Date(),
       exercises: workoutExercises,
     });
+
+    dispatcher.tryDispatch(2, null);
+    setTitle(generateWorkoutTitle());
+    setNote('');
+    setWorkoutExercises([]);
+    setStartedAt(new Date());
+
+    close();
+  }
+
+  function cancelWorkout() {
+    close();
+    dispatcher.tryDispatch(2, null);
+  }
+
+  function closeModal() {
+    dispatcher.tryDispatch(2, {
+      title: title?.trim() ?? '',
+      note: note?.trim() ?? '',
+      exercises: workoutExercises,
+      started_at: startedAt,
+    });
+
+    close();
   }
 
   function removeExercise(index: number) {
@@ -90,13 +146,68 @@ export default function WorkoutModal({ visible, close }: { visible: boolean; clo
   const [showExerciseModal, setShowExerciseModal] = useState(false);
 
   return (
-    <Modal animationType='slide' visible={visible} onRequestClose={close}>
-      <View style={{ backgroundColor: '#292727', height: '100%' }}>
-        <WorkoutTitleInput title={title} setTitle={setTitle} />
-        <WorkoutNoteInput note={note} setNote={setNote} />
+    <Modal
+      isVisible={visible}
+      onSwipeComplete={() => {
+        closeModal();
+      }}
+      swipeDirection='down'
+      style={{ backgroundColor: 'white', height: '100%', padding: 24, paddingTop: 12 }}
+    >
+      <View
+        style={{
+          borderStyle: 'solid',
+          borderWidth: 2,
+          borderColor: 'black',
+          top: 0,
+          width: '100%',
+          margin: 6,
+          alignSelf: 'center',
+          borderRadius: 10,
+        }}
+      />
 
-        <View style={{ flex: 1 }}>
-          {workoutExercises?.length ? (
+      <View style={{ flex: -1, flexDirection: 'row', width: '100%', height: '10%' }}>
+        <View style={{ width: '50%', paddingVertical: 12 }}>
+          <Pressable
+            onPress={cancelWorkout}
+            style={{
+              backgroundColor: 'red',
+              paddingVertical: 4,
+              borderRadius: 4,
+              paddingHorizontal: 12,
+              alignSelf: 'flex-start',
+            }}
+          >
+            <Text style={{ color: 'white', fontWeight: '400', alignSelf: 'center' }}> Cancel</Text>
+          </Pressable>
+        </View>
+        <View style={{ width: '50%', paddingVertical: 12 }}>
+          <Pressable
+            disabled={workoutExercises.length === 0}
+            onPress={save}
+            style={{
+              backgroundColor: 'green',
+              paddingVertical: 4,
+              borderRadius: 4,
+              paddingHorizontal: 12,
+              alignSelf: 'flex-end',
+            }}
+          >
+            <Text style={{ color: 'white', fontWeight: '400', alignSelf: 'center' }}>Save</Text>{' '}
+          </Pressable>
+        </View>
+      </View>
+
+      <View style={{ height: '20%' }}>
+        <WorkoutTitleInput title={title} setTitle={setTitle} />
+        <Timer startTime={startedAt} />
+        <WorkoutNoteInput note={note} setNote={setNote} />
+      </View>
+
+      <View style={{ flex: 1, height: '70%' }}>
+        {workoutExercises?.length ? (
+          <View>
             <FlatList
               data={workoutExercises}
               renderItem={({ item, index }) => (
@@ -108,29 +219,26 @@ export default function WorkoutModal({ visible, close }: { visible: boolean; clo
                 />
               )}
             />
-          ) : (
-            false
-          )}
-          <Pressable
-            onPress={() => setShowExerciseModal(true)}
-            style={{ backgroundColor: 'green', width: '30%', marginTop: 32, alignSelf: 'center' }}
-          >
-            <Text style={{ color: 'white', textAlign: 'center', fontSize: 16, padding: 4 }}>Add exercise</Text>
-          </Pressable>
-        </View>
-
-        <Pressable onPress={() => setShowExercise(true)}>New Exercise</Pressable>
-        <NewExercise visible={showExercise} close={() => {}} />
-
-        <SaveWorkoutButton onClick={save} />
-
-        <ExerciseInputModal
-          visible={showExerciseModal}
-          exercises={exercises}
-          close={() => setShowExerciseModal(false)}
-          addExercise={addExercise}
-        />
+          </View>
+        ) : (
+          <></>
+        )}
+        <Pressable
+          onPress={() => setShowExerciseModal(true)}
+          style={{ backgroundColor: 'green', width: '100%', alignSelf: 'center', marginTop: 32 }}
+        >
+          <Text style={{ color: 'white', textAlign: 'center', fontSize: 16, padding: 4 }}>Add exercise</Text>
+        </Pressable>
       </View>
+
+      <NewExercise visible={showExercise} close={() => {}} />
+
+      <ExerciseInputModal
+        visible={showExerciseModal}
+        exercises={exercises}
+        close={() => setShowExerciseModal(false)}
+        addExercise={addExercise}
+      />
     </Modal>
   );
 }

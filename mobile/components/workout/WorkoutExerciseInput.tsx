@@ -45,20 +45,34 @@ export default function WorkoutExerciseInput({
   }
 
   return (
-    <View style={{ gap: 4 }}>
+    <View
+      style={{
+        gap: 4,
+        padding: 8,
+        borderStyle: 'solid',
+        borderWidth: 1,
+        borderColor: 'black',
+      }}
+    >
       <View style={{ flex: 1, flexDirection: 'row' }}>
-        <Text style={{ width: '90%' }}>{exercise.title}</Text>
+        <Text style={{ width: '90%', fontWeight: '600' }}>{exercise?.title}</Text>
         <Pressable onPress={remove}>
           <Image source={{ uri: '../../assets/delete.svg' }} style={{ width: 20, height: 24 }} />
         </Pressable>
       </View>
-
+      <View style={{ flex: 1, flexDirection: 'row', width: '100%' }}>
+        <Text style={{ width: '15%', textAlign: 'center' }}>Set</Text>
+        <Text style={{ width: '25%', textAlign: 'center' }}>Previous</Text>
+        <Text style={{ width: '25%', textAlign: 'center' }}>Reps</Text>
+        <Text style={{ width: '25%', textAlign: 'center' }}>Weight</Text>
+        <View style={{ width: '10%' }} />
+      </View>
       <FlatList
         data={workoutExercise?.sets ?? []}
         renderItem={({ item, index }) => (
           <WorkoutSetInput
             index={index}
-            exerciseType={exercise.exercise_type}
+            exerciseType={exercise?.exercise_type}
             set={item}
             updateSet={(set) => updateSet(set, index)}
             deleteSet={() => deleteSet(index)}
@@ -68,7 +82,7 @@ export default function WorkoutExerciseInput({
       />
 
       <Pressable
-        style={{ backgroundColor: 'green', width: '20%', marginTop: 32, alignSelf: 'center' }}
+        style={{ backgroundColor: 'green', width: '75%', marginTop: 12, alignSelf: 'center', borderRadius: 4 }}
         onPress={addSet}
       >
         <Text style={{ alignSelf: 'center' }}>Add Set</Text>

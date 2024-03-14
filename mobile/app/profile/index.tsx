@@ -9,13 +9,18 @@ import { Link } from 'expo-router';
 import { WorkoutModel } from '../../types';
 import WorkoutListItem from '../../components/workout/WorkoutListItem';
 import Settings from '../../components/profile/Settings';
+import Fab from '../../components/floatingbutton/fab';
+import WorkoutModal from '../../components/workout/WorkoutModal';
+import { UseDispatch } from '../state';
 
 export default function Profile() {
   const [username, setUsername] = useState('');
   const [userid, setUserid] = useState('');
   const [lastWorkout, setLastWorkout] = useState('');
-  const [workouts, setWorkouts] = useState<WorkoutModel[]>();
   const [open, setOpen] = useState<boolean>(false);
+  const [visible, setVisible] = useState(false);
+
+  const dispatcher = new UseDispatch();
 
   async function getUsername() {
     const first_name = await AsyncStorage.getItem('userfirstname');
@@ -44,13 +49,15 @@ export default function Profile() {
     await AsyncStorage.getItem('userid').then((id) => setUserid(id || 'kasper'));
   }
 
-  useEffect(() => {
-    try {
-      getWorkouts(userid).then(setWorkouts);
-    } catch (err) {
-      console.error(err);
-    }
+  function openWorkout() {
+    return dispatcher.getState().workouts !== null ? (
+      <WorkoutModal visible={visible} close={() => setVisible(false)} workouts={dispatcher.getState().workouts} />
+    ) : (
+      <></>
+    );
+  }
 
+  useEffect(() => {
     try {
       getLastWorkout();
     } catch (err) {
@@ -98,17 +105,9 @@ export default function Profile() {
             </View>
           </View>
         </View>
-
-        <View style={{ gap: 8, paddingBottom: '20%', backgroundColor: '#292727' }}>
-          <FlatList
-            style={{}}
-            data={workouts}
-            keyExtractor={(item) => item._id}
-            renderItem={({ item }) => <WorkoutListItem workout={item} />}
-          />
-        </View>
       </View>
-
+      <Fab open={() => setVisible(true)} />
+      {openWorkout()}
       <BottomNavBar newState={[false, false, false, false, true]} />
     </View>
   );
