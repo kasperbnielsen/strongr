@@ -1,11 +1,12 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { FlatList, Pressable, Text, View } from 'react-native';
-import Modal from 'react-native-modal'
+import Modal from 'react-native-modal';
 
 import WorkoutExerciseInput from './WorkoutExerciseInput';
 import WorkoutNoteInput from './WorkoutNoteInput';
 import WorkoutTitleInput from './WorkoutTitleInput';
+import { UseDispatch } from '../../app/state';
 import { getExercises } from '../../endpoints/exercises';
 import { createWorkout } from '../../endpoints/workouts';
 import {
@@ -18,8 +19,6 @@ import {
 } from '../../types';
 import ExerciseInputModal from '../exercise/ExerciseInputModal';
 import NewExercise from '../exercise/NewExercise';
-import { getState } from 'tamagui';
-import { UseDispatch } from '../../app/state';
 import Timer from '../stopwatch/Timer';
 
 function generateWorkoutTitle() {
@@ -82,6 +81,7 @@ export default function WorkoutModal({
   }, [dispatcher.getState().workouts]);
 
   async function save() {
+    if (!workoutExercises.length) return;
     const trimmedTitle = title?.trim() ?? '';
 
     if (!trimmedTitle.length) return;
@@ -105,10 +105,8 @@ export default function WorkoutModal({
   }
 
   function cancelWorkout() {
-    
     close();
     dispatcher.tryDispatch(2, null);
-
   }
 
   function closeModal() {
@@ -148,78 +146,99 @@ export default function WorkoutModal({
   const [showExerciseModal, setShowExerciseModal] = useState(false);
 
   return (
-    <Modal isVisible={visible} onSwipeComplete={() => {
-      closeModal();
-    }} swipeDirection='down'>
-      
-      <View style={{ backgroundColor: '#292727', height: '100%', padding: 12 }}>
+    <Modal
+      isVisible={visible}
+      onSwipeComplete={() => {
+        closeModal();
+      }}
+      swipeDirection='down'
+      style={{ backgroundColor: 'white', height: '100%', padding: 24, paddingTop: 12 }}
+    >
+      <View
+        style={{
+          borderStyle: 'solid',
+          borderWidth: 2,
+          borderColor: 'black',
+          top: 0,
+          width: '100%',
+          margin: 6,
+          alignSelf: 'center',
+          borderRadius: 10,
+        }}
+      />
 
-        <View
+      <View style={{ flex: -1, flexDirection: 'row', width: '100%', height: '10%' }}>
+        <View style={{ width: '50%', paddingVertical: 12 }}>
+          <Pressable
+            onPress={cancelWorkout}
             style={{
-              borderStyle: 'solid',
-              borderWidth: 2,
-              borderColor: 'black',
-              top: 0,
-              width: '90%',
-              margin: 6,
-              alignSelf: 'center',
-              borderRadius: 10,
+              backgroundColor: 'red',
+              paddingVertical: 4,
+              borderRadius: 4,
+              paddingHorizontal: 12,
+              alignSelf: 'flex-start',
             }}
-          />
-
-          <View style={{ flex: 2, flexDirection: 'row', width: '100%', height: '10%'}}>
-            <View style={{width: '50%', padding: 12}}>
-              <Pressable onPress={cancelWorkout} style={{backgroundColor: 'red',   paddingVertical: 4, borderRadius: 4, alignSelf: 'flex-start', paddingHorizontal: 12}}><Text style={{color: 'white', fontWeight: '400', alignSelf: 'center'}}> Cancel</Text></Pressable>
-            </View>
-            <View style={{  width: '50%', padding: 12}}>
-              <Pressable onPress={save} style={{backgroundColor: 'green', width: 'auto',  paddingVertical: 4,  borderRadius: 4, alignSelf: 'flex-end', paddingHorizontal: 12}}><Text style={{color: 'white', fontWeight: '400', alignSelf: 'center'}}>Save</Text> </Pressable>
-            </View>
-          </View>
-
-          <View style={{ height: '20%'}}>
-            <WorkoutTitleInput title={title} setTitle={setTitle} />
-            <Timer startTime={startedAt} />
-            <WorkoutNoteInput note={note} setNote={setNote} />
-          </View>
-          
-
-          <View style={{ flex: 1, height: '70%' }}>
-            {workoutExercises?.length ? (
-              <FlatList
-                data={workoutExercises}
-                renderItem={({ item, index }) => (
-                  <WorkoutExerciseInput
-                    workoutExercise={item}
-                    remove={() => removeExercise(index)}
-                    exercise={exercises.find((e) => e._id === item.exercise_id)}
-                    update={(item) => updateExercise(index, item)}
-                  />
-                )}
-              />
-            ) : (
-              <></>
-            )}
-            <Pressable
-              onPress={() => setShowExerciseModal(true)}
-              style={{ backgroundColor: 'green', width: '30%', marginTop: 32, alignSelf: 'center' }}
-            >
-              <Text style={{ color: 'white', textAlign: 'center', fontSize: 16, padding: 4 }}>Add exercise</Text>
-            </Pressable>
-          </View>
-
-          <Pressable onPress={() => setShowExercise(true)}>
-            <Text>New Exercise</Text>
+          >
+            <Text style={{ color: 'white', fontWeight: '400', alignSelf: 'center' }}> Cancel</Text>
           </Pressable>
-          <NewExercise visible={showExercise} close={() => {}} />
-
-
-          <ExerciseInputModal
-            visible={showExerciseModal}
-            exercises={exercises}
-            close={() => setShowExerciseModal(false)}
-            addExercise={addExercise}
-          />
+        </View>
+        <View style={{ width: '50%', paddingVertical: 12 }}>
+          <Pressable
+            disabled={workoutExercises.length === 0}
+            onPress={save}
+            style={{
+              backgroundColor: 'green',
+              paddingVertical: 4,
+              borderRadius: 4,
+              paddingHorizontal: 12,
+              alignSelf: 'flex-end',
+            }}
+          >
+            <Text style={{ color: 'white', fontWeight: '400', alignSelf: 'center' }}>Save</Text>{' '}
+          </Pressable>
+        </View>
       </View>
+
+      <View style={{ height: '20%' }}>
+        <WorkoutTitleInput title={title} setTitle={setTitle} />
+        <Timer startTime={startedAt} />
+        <WorkoutNoteInput note={note} setNote={setNote} />
+      </View>
+
+      <View style={{ flex: 1, height: '70%' }}>
+        {workoutExercises?.length ? (
+          <View>
+            <FlatList
+              data={workoutExercises}
+              renderItem={({ item, index }) => (
+                <WorkoutExerciseInput
+                  workoutExercise={item}
+                  remove={() => removeExercise(index)}
+                  exercise={exercises.find((e) => e._id === item.exercise_id)}
+                  update={(item) => updateExercise(index, item)}
+                />
+              )}
+            />
+          </View>
+        ) : (
+          <></>
+        )}
+        <Pressable
+          onPress={() => setShowExerciseModal(true)}
+          style={{ backgroundColor: 'green', width: '100%', alignSelf: 'center', marginTop: 32 }}
+        >
+          <Text style={{ color: 'white', textAlign: 'center', fontSize: 16, padding: 4 }}>Add exercise</Text>
+        </Pressable>
+      </View>
+
+      <NewExercise visible={showExercise} close={() => {}} />
+
+      <ExerciseInputModal
+        visible={showExerciseModal}
+        exercises={exercises}
+        close={() => setShowExerciseModal(false)}
+        addExercise={addExercise}
+      />
     </Modal>
   );
 }
