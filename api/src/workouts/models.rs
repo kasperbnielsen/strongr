@@ -161,6 +161,12 @@ impl From<WorkoutModelExercise> for WorkoutExerciseInput {
     }
 }
 
+impl IntoResponse for WorkoutModelExercise {
+    fn into_response(self) -> axum::response::Response {
+        axum::Json(self).into_response()
+    }
+}
+
 impl From<WorkoutModelExerciseSet> for WorkoutExerciseSetInput {
     fn from(value: WorkoutModelExerciseSet) -> Self {
         Self {

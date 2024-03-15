@@ -7,10 +7,11 @@ import WorkoutExerciseInput from './WorkoutExerciseInput';
 import WorkoutNoteInput from './WorkoutNoteInput';
 import WorkoutTitleInput from './WorkoutTitleInput';
 import { UseDispatch } from '../../app/state';
-import { getExercises } from '../../endpoints/exercises';
+import { getExercises, getPrevious } from '../../endpoints/exercises';
 import { createWorkout } from '../../endpoints/workouts';
 import {
   ExerciseModel,
+  PreviousExercises,
   SetType,
   WorkoutModel,
   WorkoutModelExercise,
@@ -53,6 +54,10 @@ export default function WorkoutModal({
 
   const [showExercise, setShowExercise] = useState(false);
 
+  const [exerciseHistory, setExerciseHistory] = useState<PreviousExercises[]>([]);
+
+  const [previous, setPrevious] = useState<any[]>([]);
+
   const dispatcher = new UseDispatch();
 
   const [workoutExercises, setWorkoutExercises] = useState<WorkoutModel['exercises']>([]);
@@ -62,6 +67,10 @@ export default function WorkoutModal({
       setUserId(value);
     }
   };
+
+  async function getPreviousExerciseData() {
+    return await getPrevious(userId);
+  }
 
   useEffect(() => {
     getData();
@@ -79,6 +88,29 @@ export default function WorkoutModal({
     }
     getExercises().then(setExercises);
   }, [dispatcher.getState().workouts]);
+
+  useEffect(() => {
+    getPreviousExerciseData().then(setExerciseHistory);
+  }, [userId]);
+
+  useEffect(() => {
+    if (workoutExercises.length !== 0 && exerciseHistory !== undefined) {
+      const find = exerciseHistory.find((val) => val._id.$oid === workoutExercises.at(-1).exercise_id.$oid);
+
+      if (find === undefined)
+        setPrevious([
+          ...previous,
+          {
+            sets: [
+              { weight: 0, time: 0 },
+              { weight: 0, time: 0 },
+              { weight: 0, time: 0 },
+            ],
+          },
+        ]);
+      else setPrevious([...previous, find]);
+    }
+  }, [workoutExercises.length]);
 
   async function save() {
     if (!workoutExercises.length) return;
@@ -194,7 +226,7 @@ export default function WorkoutModal({
               alignSelf: 'flex-end',
             }}
           >
-            <Text style={{ color: 'white', fontWeight: '400', alignSelf: 'center' }}>Save</Text>{' '}
+            <Text style={{ color: 'white', fontWeight: '400', alignSelf: 'center' }}>Save</Text>
           </Pressable>
         </View>
       </View>
@@ -207,19 +239,18 @@ export default function WorkoutModal({
 
       <View style={{ flex: 1, height: '70%' }}>
         {workoutExercises?.length ? (
-          <View>
-            <FlatList
-              data={workoutExercises}
-              renderItem={({ item, index }) => (
-                <WorkoutExerciseInput
-                  workoutExercise={item}
-                  remove={() => removeExercise(index)}
-                  exercise={exercises.find((e) => e._id === item.exercise_id)}
-                  update={(item) => updateExercise(index, item)}
-                />
-              )}
-            />
-          </View>
+          <FlatList
+            data={workoutExercises}
+            renderItem={({ item, index }) => (
+              <WorkoutExerciseInput
+                previous={previous[index]}
+                workoutExercise={item}
+                remove={() => removeExercise(index)}
+                exercise={exercises.find((e) => e._id === item.exercise_id)}
+                update={(item) => updateExercise(index, item)}
+              />
+            )}
+          />
         ) : (
           <></>
         )}

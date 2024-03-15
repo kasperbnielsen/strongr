@@ -20,7 +20,7 @@ export default function NewRoutine({ visible, close }: { visible: boolean; close
 
   useEffect(() => {
     getExercises().then(setExerciseList);
-  });
+  }, []);
 
   return (
     <Modal

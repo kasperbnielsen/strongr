@@ -3,7 +3,7 @@ use axum::routing::{get, post};
 use database::setup_database_client;
 use exercises::handlers::{
     create_exercise, create_exercise_for_user, get_exercise_by_id, get_exercise_by_ids,
-    get_exercises, update_exercise_by_id,
+    get_exercises, get_previous, update_exercise_by_id,
 };
 use jwt::logic::{refresh_jwt_token, verify_token};
 use tower_http::cors::{Any, CorsLayer};
@@ -50,6 +50,7 @@ async fn main() {
                 .put(update_workout_by_id)
                 .delete(delete_workout_by_id),
         )
+        .route("/previousexercises/:user_id", get(get_previous))
         .route("/users/:user_id/workouts", get(get_user_workouts))
         .route("/users/:user_id/workout", get(get_latest_workout))
         .layer(axum::middleware::from_fn(verify_token))

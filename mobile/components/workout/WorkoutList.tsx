@@ -8,7 +8,7 @@ export default function WorkoutList({ workouts }: { workouts: WorkoutModel[] }) 
     <FlatList
       data={workouts}
       keyExtractor={(item) => item._id}
-      renderItem={({ item }) => <WorkoutListItem workout={item} />}
+      renderItem={({ item }) => <WorkoutListItem workout={item} seperator={false} />}
     />
   );
 }

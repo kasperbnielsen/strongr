@@ -1,7 +1,7 @@
 import axios from 'axios';
 
 import { API_BASE_URL, responseAxios } from '../';
-import { ExerciseModel } from '../../types';
+import { ExerciseModel, PreviousExercises, PreviousExercisesList, WorkoutModelExercise } from '../../types';
 
 export async function getExercises() {
   return axios.get(`${API_BASE_URL}/exercises`).then(responseAxios<ExerciseModel[]>);
@@ -21,4 +21,8 @@ export async function createExercise(entity: ExerciseModel) {
 
 export async function getExerciseList(ids: string[]) {
   return axios.post(`${API_BASE_URL}/exercises/list`, ids).then(responseAxios<ExerciseModel[]>);
+}
+
+export async function getPrevious(user_id: string) {
+  return axios.get(`${API_BASE_URL}/previousexercises/${user_id}`).then(responseAxios<PreviousExercises[]>);
 }

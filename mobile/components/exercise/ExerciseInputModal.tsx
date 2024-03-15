@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Button, FlatList, Modal, View } from 'react-native';
+import { Button, FlatList, Modal, Pressable, View } from 'react-native';
 import { TextInput } from 'react-native-gesture-handler';
 
 import { ExerciseModel } from '../../types';
@@ -26,8 +26,7 @@ export default function ExerciseInputModal({
     >
       <View>
         <TextInput value={search} placeholder='Search...' onChangeText={(e) => setSearch(e.trim())} />
-
-        <Button onPress={close} title='Close' />
+        <Pressable onPress={close} />
       </View>
 
       <FlatList
