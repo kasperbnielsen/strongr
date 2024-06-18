@@ -1,0 +1,91 @@
+name: validate
+on: [push]
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+env:
+  CARGO_TERM_COLOR: always
+  RUST_BACKTRACE: full
+jobs:
+  api:
+    defaults:
+      run:
+        working-directory: /api
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: Swatinem/rust-cache@v2
+      - run: rustup toolchain install stable --profile minimal
+      - run: rustup component add rustfmt clippy
+      - run: cargo fetch
+      - run: cargo build
+      - run: cargo fmt -- --check --color always
+      - run: cargo clippy
+      - run: cargo test
+    mobile:
+      runs-on: ${{ matrix.os }}
+      defaults:
+        run:
+          working-directory: /mobile
+      strategy:
+        matrix:
+          os: [ubuntu-latest]
+          node: [20]
+      steps:
+        - name: Checkout 🛎
+          uses: actions/checkout@v4
+        - name: Setup node env 🏗
+          uses: actions/setup-node@v4
+          with:
+            node-version: ${{ matrix.node }}
+            check-latest: true
+        - name: Cache node_modules 📦
+          uses: actions/cache@v4
+          with:
+            path: ~/.npm
+            key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+            restore-keys: |
+              ${{ runner.os }}-node-
+        - name: Install dependencies 👨🏻‍💻
+          run: npm i
+        - name: Run lint 👀
+          run: npm run lint
+        - name: Run format 💎
+          run: npm run format:check
+        - name: Build project
+          run: npm run build
+    nextweb:
+      runs-on: ${{ matrix.os }}
+      defaults:
+        run:
+          working-directory: /nextweb
+      strategy:
+        matrix:
+          os: [ubuntu-latest]
+          node: [20]
+      steps:
+        - name: Checkout 🛎
+          uses: actions/checkout@v4
+        - name: Setup node env 🏗
+          uses: actions/setup-node@v4
+          with:
+            node-version: ${{ matrix.node }}
+            check-latest: true
+        - name: Cache node_modules 📦
+          uses: actions/cache@v4
+          with:
+            path: ~/.npm
+            key: ${{ runner.os }}-node-${{ hashFiles('**/package-lock.json') }}
+            restore-keys: |
+              ${{ runner.os }}-node-
+        - name: Install dependencies 👨🏻‍💻
+          run: npm i
+        - name: Run lint 👀
+          run: npm run lint
+        - name: Run format 💎
+          run: npm run format:check
+        - name: Build project
+          run: npm run build
