@@ -1,6 +1,5 @@
 version: 2
 updates:
-    open-pull-requests-limit: 25
   - package-ecosystem: npm
     directory: /mobile
     schedule:
