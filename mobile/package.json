@@ -20,7 +20,7 @@
     "@tamagui/lucide-icons": "^1.80.4",
     "@tamagui/polyfill-dev": "^1.80.4",
     "@tamagui/select": "^1.80.4",
-    "@tamagui/switch": "^1.88.13",
+    "@tamagui/switch": "^1.100.6",
     "@types/react": "~18.2.14",
     "axios": "^1.7.2",
     "expo": "^49.0.3",
