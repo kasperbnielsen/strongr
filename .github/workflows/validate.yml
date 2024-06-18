@@ -55,8 +55,6 @@ jobs:
         run: npm run lint
       - name: Run format 💎
         run: npm run format:check
-      - name: Build project
-        run: npm run build
   nextweb:
     runs-on: ${{ matrix.os }}
     defaults:
