@@ -6,6 +6,7 @@ use exercises::handlers::{
     get_exercises, get_previous, update_exercise_by_id,
 };
 use jwt::logic::{refresh_jwt_token, verify_token};
+use routines::handlers::{create_routine, get_routines};
 use tower_http::cors::{Any, CorsLayer};
 use users::handlers::{create_user, get_user_by_id, update_user_by_id};
 use workouts::handlers::{
@@ -18,8 +19,13 @@ mod database;
 mod error;
 mod exercises;
 mod jwt;
+mod routines;
 mod users;
 mod workouts;
+
+pub fn get_collection<T>(database: mongodb::Client, collection: String) -> mongodb::Collection<T> {
+    database.database("strongr").collection::<T>(&collection)
+}
 
 pub async fn index() -> String {
     "we up!".to_string()
@@ -53,6 +59,7 @@ async fn main() {
         .route("/previousexercises/:user_id", get(get_previous))
         .route("/users/:user_id/workouts", get(get_user_workouts))
         .route("/users/:user_id/workout", get(get_latest_workout))
+        .route("/routines/:user_id", get(get_routines).post(create_routine))
         .layer(axum::middleware::from_fn(verify_token))
         .route("/users", post(create_user))
         .route("/auth", post(authenticate_credentials))

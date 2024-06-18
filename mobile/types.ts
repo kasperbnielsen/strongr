@@ -85,3 +85,13 @@ export interface PreviousExercises {
 export interface PreviousExercisesList {
   list: PreviousExercises[];
 }
+
+export interface Routines {
+  user_id: string;
+  title: string;
+  exercises: { title: string; exercise_id: string }[];
+}
+
+export interface RoutinesInput {
+  list: { title: string; exercises: { title: string; exercise_id: string }[] }[];
+}

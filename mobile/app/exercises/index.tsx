@@ -1,28 +1,24 @@
 import { useEffect, useState } from 'react';
-import { Button, FlatList, Text, View } from 'react-native';
+import { FlatList, View } from 'react-native';
 
-import ExerciseInputModal from '../../components/exercise/ExerciseInputModal';
-import NewExercise from '../../components/exercise/NewExercise';
-import BottomNavBar from '../../components/navbar/BottomNavBar';
-import { createExercise, getExercises } from '../../endpoints/exercises';
+import { exerciseList } from '../../assets/exerciseList';
+import BottomNavBar from '../../components/bottomnavbar/BottomNavBar';
+import ExerciseGroup from '../../components/exercise/ExerciseGroup';
+import { getExercises } from '../../endpoints/exercises';
 import { ExerciseModel } from '../../types';
 
 export default function ExerciseOverview() {
   const [exercises, setExercises] = useState<ExerciseModel[]>([]);
 
-  const [showExercise, setShowExercise] = useState<boolean>(true);
-
   useEffect(() => {
     getExercises().then(setExercises);
   }, []);
 
-  function addExercise(entity: ExerciseModel) {
-    createExercise(entity);
-  }
-
   return (
-    <View style={{ height: '100%' }}>
-      <BottomNavBar newState={[false, false, false, false, true]} />
+    <View style={{ height: '100%', backgroundColor: '#292727', position: 'relative' }}>
+      <FlatList data={Object.keys(exerciseList)} renderItem={({ item, index }) => <ExerciseGroup group={item} />} />
+
+      <BottomNavBar newState={[false, false, true, false]} />
     </View>
   );
 }

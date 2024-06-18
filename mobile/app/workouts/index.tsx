@@ -2,7 +2,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
 
-import BottomNavBar from '../../components/navbar/BottomNavBar';
+import BottomNavBar from '../../components/bottomnavbar/BottomNavBar';
 import WorkoutModal from '../../components/workout/WorkoutModal';
 import { getWorkouts } from '../../endpoints/workouts';
 import { WorkoutModel } from '../../types';

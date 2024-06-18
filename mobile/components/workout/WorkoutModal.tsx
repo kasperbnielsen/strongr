@@ -12,6 +12,7 @@ import { createWorkout } from '../../endpoints/workouts';
 import {
   ExerciseModel,
   PreviousExercises,
+  Routines,
   SetType,
   WorkoutModel,
   WorkoutModelExercise,
@@ -36,10 +37,14 @@ export default function WorkoutModal({
   visible,
   close,
   workouts,
+  getSavedWorkout,
+  isRoutine,
 }: {
   visible: boolean;
   close: () => void;
   workouts: WorkoutModelOutput | null;
+  getSavedWorkout: (workout: Routines) => void;
+  isRoutine: boolean;
 }) {
   // TODO: move to global state
   const [exercises, setExercises] = useState<ExerciseModel[]>([]);
@@ -74,7 +79,12 @@ export default function WorkoutModal({
 
   useEffect(() => {
     getData();
-    if (workouts !== null) {
+    if (isRoutine) {
+      setTitle(workouts.title);
+      setNote(workouts.note);
+      setWorkoutExercises(workouts.exercises);
+      setStartedAt(workouts.started_at);
+    } else if (workouts !== null) {
       const data: { title: string; note: string; exercises: WorkoutModelExercise[]; started_at: Date } = workouts;
       setTitle(data.title);
       setNote(data.note);
@@ -87,7 +97,7 @@ export default function WorkoutModal({
       setStartedAt(new Date());
     }
     getExercises().then(setExercises);
-  }, [dispatcher.getState().workouts]);
+  }, [dispatcher.getState().workouts, workouts]);
 
   useEffect(() => {
     getPreviousExerciseData().then(setExerciseHistory);
@@ -126,6 +136,16 @@ export default function WorkoutModal({
       finished_at: new Date(),
       exercises: workoutExercises,
     });
+
+    const exerciseIdList: Routines = { user_id: userId, title: trimmedTitle, exercises: [] };
+
+    workoutExercises.forEach((exercise) => {
+      exerciseIdList.exercises.push({
+        title: exercises.find((val) => val._id.$oid === exercise.exercise_id.$oid).title,
+        exercise_id: exercise.exercise_id.$oid,
+      });
+    });
+    getSavedWorkout(exerciseIdList);
 
     dispatcher.tryDispatch(2, null);
     setTitle(generateWorkoutTitle());
@@ -246,7 +266,7 @@ export default function WorkoutModal({
                 previous={previous[index]}
                 workoutExercise={item}
                 remove={() => removeExercise(index)}
-                exercise={exercises.find((e) => e._id === item.exercise_id)}
+                exercise={exercises.find((e) => e._id.$oid === item.exercise_id.$oid)}
                 update={(item) => updateExercise(index, item)}
               />
             )}
