@@ -2,7 +2,7 @@ import { useLocalSearchParams } from 'expo-router';
 import { useEffect, useState } from 'react';
 import { FlatList, View } from 'react-native';
 
-import BottomNavBar from '../../../components/navbar/BottomNavBar';
+import BottomNavBar from '../../../components/bottomnavbar/BottomNavBar';
 import WorkoutListItem from '../../../components/workout/WorkoutListItem';
 import { getWorkouts } from '../../../endpoints/workouts';
 import { WorkoutModel } from '../../../types';

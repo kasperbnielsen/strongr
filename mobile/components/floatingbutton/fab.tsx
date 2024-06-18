@@ -39,7 +39,7 @@ export default function Fab({ open }: { open: () => void }) {
 
   useEffect(() => {
     setIsVisible(dispatcher.getState().workouts !== null);
-  }, [dispatcher.getState().workouts])
+  }, [dispatcher.getState().workouts]);
 
   return isVisible ? (
     <View style={{ position: 'absolute', transform: pos.getTranslateTransform() }}>

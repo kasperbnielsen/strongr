@@ -68,7 +68,7 @@ export default function WorkoutListItem({ workout, seperator }: { workout: Worko
         style={{
           backgroundColor: 'inherit',
           marginVertical: 8,
-          width: '66%',
+          width: '83%',
           minHeight: 100,
           borderRadius: 5,
           borderColor: 'gray',

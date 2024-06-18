@@ -2,6 +2,8 @@ use axum::response::IntoResponse;
 use mongodb::bson::{oid::ObjectId, serde_helpers::hex_string_as_object_id};
 use typeshare::typeshare;
 
+use crate::workouts::models::WorkoutModelExerciseSet;
+
 #[typeshare]
 #[derive(serde::Deserialize, serde::Serialize, Debug)]
 pub enum ExerciseType {
@@ -16,6 +18,11 @@ pub struct ExerciseModel {
     pub title: String,
     pub description: String,
     pub exercise_type: ExerciseType,
+}
+#[derive(serde::Deserialize, serde::Serialize, Debug)]
+pub struct PreviousExerciseInput {
+    pub user_id: String,
+    pub exercise_id: String,
 }
 
 impl IntoResponse for ExerciseOutput {
@@ -84,4 +91,24 @@ pub struct UpdateExerciseInput {
     pub title: String,
     pub description: String,
     pub exercise_type: ExerciseType,
+}
+
+#[typeshare]
+#[derive(serde::Deserialize, serde::Serialize, Debug)]
+pub struct PreviousExercises {
+    #[serde(with = "hex_string_as_object_id")]
+    pub _id: String,
+    pub sets: Vec<WorkoutModelExerciseSet>,
+}
+
+#[typeshare]
+#[derive(serde::Deserialize, serde::Serialize)]
+pub struct PreviousExercisesList {
+    pub list: Vec<PreviousExercises>,
+}
+
+impl IntoResponse for PreviousExercisesList {
+    fn into_response(self) -> axum::response::Response {
+        axum::Json(self.list).into_response()
+    }
 }

@@ -39,7 +39,7 @@ export default function LoginModal({ navigation }) {
   }, [model]);
 
   return (
-    <ImageBackground source={image} resizeMode='cover' style={{ height: '100%' }}>
+    <ImageBackground source={image} resizeMode='cover' style={{ height: '110%' }}>
       <View style={{ width: '100%', alignSelf: 'center', height: '100%' }}>
         <View style={{ height: '70%', marginTop: 100 }}>
           <TextInput

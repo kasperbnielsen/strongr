@@ -1,18 +1,20 @@
-import { Button, FlatList, Pressable, Text, View, Image } from 'react-native';
+import { FlatList, Pressable, Text, View, Image } from 'react-native';
 
 import WorkoutSetInput from './WorkoutSetInput';
-import { ExerciseModel, SetType, WorkoutModelExercise, WorkoutModelExerciseSet } from '../../types';
+import { ExerciseModel, PreviousExercises, SetType, WorkoutModelExercise, WorkoutModelExerciseSet } from '../../types';
 
 export default function WorkoutExerciseInput({
   workoutExercise,
   exercise,
   update,
   remove,
+  previous,
 }: {
   workoutExercise: WorkoutModelExercise;
   exercise: ExerciseModel;
   update: (item: WorkoutModelExercise) => void;
   remove: () => void;
+  previous: PreviousExercises;
 }) {
   function addSet() {
     const set: WorkoutModelExerciseSet = {
@@ -48,23 +50,27 @@ export default function WorkoutExerciseInput({
     <View
       style={{
         gap: 4,
+        marginTop: 8,
         padding: 8,
         borderStyle: 'solid',
         borderWidth: 1,
         borderColor: 'black',
+        borderRadius: 4,
       }}
     >
       <View style={{ flex: 1, flexDirection: 'row' }}>
         <Text style={{ width: '90%', fontWeight: '600' }}>{exercise?.title}</Text>
         <Pressable onPress={remove}>
-          <Image source={{ uri: '../../assets/delete.svg' }} style={{ width: 20, height: 24 }} />
+          <Image source={{ uri: '../../assets/exit-icon.svg' }} style={{ width: 20, height: 24 }} />
         </Pressable>
       </View>
       <View style={{ flex: 1, flexDirection: 'row', width: '100%' }}>
         <Text style={{ width: '15%', textAlign: 'center' }}>Set</Text>
         <Text style={{ width: '25%', textAlign: 'center' }}>Previous</Text>
         <Text style={{ width: '25%', textAlign: 'center' }}>Reps</Text>
-        <Text style={{ width: '25%', textAlign: 'center' }}>Weight</Text>
+        <Text style={{ width: '25%', textAlign: 'center' }}>
+          {exercise?.exercise_type === 'Weight' ? 'Weight' : 'Time'}
+        </Text>
         <View style={{ width: '10%' }} />
       </View>
       <FlatList
@@ -76,6 +82,13 @@ export default function WorkoutExerciseInput({
             set={item}
             updateSet={(set) => updateSet(set, index)}
             deleteSet={() => deleteSet(index)}
+            previous={
+              previous?.sets.length >= index + 1
+                ? exercise?.exercise_type === 'Weight'
+                  ? previous?.sets[index].weight
+                  : previous?.sets[index].time
+                : null
+            }
           />
         )}
         keyExtractor={(_, index) => index.toString()}

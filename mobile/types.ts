@@ -44,6 +44,13 @@ export interface WorkoutModelExerciseSet {
   time: number;
 }
 
+export interface WorkoutModelExerciseSet2 {
+  set_type: string;
+  weight: number;
+  reps: number;
+  time: number;
+}
+
 export interface WorkoutModelExercise {
   exercise_id: { $oid: string };
   note: string;
@@ -68,4 +75,23 @@ export interface WorkoutModelOutput {
   exercises: WorkoutModelExercise[];
   started_at: Date;
   finished_at: Date;
+}
+
+export interface PreviousExercises {
+  _id: { $oid: string };
+  sets: WorkoutModelExerciseSet2[];
+}
+
+export interface PreviousExercisesList {
+  list: PreviousExercises[];
+}
+
+export interface Routines {
+  user_id: string;
+  title: string;
+  exercises: { title: string; exercise_id: string }[];
+}
+
+export interface RoutinesInput {
+  list: { title: string; exercises: { title: string; exercise_id: string }[] }[];
 }
