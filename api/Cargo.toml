@@ -5,7 +5,7 @@ edition = "2021"
 
 [dependencies]
 axum = "=0.6.2"
-axum-auth = "0.4.1"
+axum-auth = "0.7.0"
 axum-login = "0.15.3"
 bcrypt = "0.15.1"
 chrono = "0.4.38"
