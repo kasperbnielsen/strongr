@@ -41,7 +41,7 @@
     "react-native-screens": "~3.32.0",
     "react-native-svg": "15.3.0",
     "react-native-web": "~0.19.12",
-    "tamagui": "^1.100.6",
+    "tamagui": "^1.101.7",
     "typescript": "^5.5.2"
   },
   "devDependencies": {
