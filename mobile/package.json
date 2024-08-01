@@ -42,7 +42,7 @@
     "react-native-svg": "15.3.0",
     "react-native-web": "~0.19.12",
     "tamagui": "^1.101.7",
-    "typescript": "^5.5.2"
+    "typescript": "^5.5.4"
   },
   "devDependencies": {
     "@babel/core": "^7.24.7",
