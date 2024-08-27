@@ -15,6 +15,24 @@ export default function Landing() {
         <link rel='mask-icon' href='/safari-pinned-tab.svg' color='#5bbad5' />
         <meta name='msapplication-TileColor' content='#da532c' />
         <meta name='theme-color' content='#ff0000' />
+        <title>STRONGR | FITNESS APP | TRACK YOUR JOURNEY TO GET STRONGR |</title>
+        <meta name='title' content='STRONGR | FITNESS APP | TRACK YOUR JOURNEY TO GET STRONGR |' />
+        <meta name='description' content='Download the strongr fitness app, and track your fitness journey' />
+
+        <meta property='og:type' content='website' />
+        <meta property='og:url' content='https://stron.gr/' />
+        <meta property='og:title' content='STRONGR | FITNESS APP | TRACK YOUR JOURNEY TO GET STRONGR |' />
+        <meta property='og:description' content='Download the strongr fitness app, and track your fitness journey' />
+        <meta property='og:image' content='/ogimage.jpg' />
+
+        <meta property='twitter:card' content='summary_large_image' />
+        <meta property='twitter:url' content='https://stron.gr/' />
+        <meta property='twitter:title' content='STRONGR | FITNESS APP | TRACK YOUR JOURNEY TO GET STRONGR |' />
+        <meta
+          property='twitter:description'
+          content='Download the strongr fitness app, and track your fitness journey'
+        />
+        <meta property='twitter:image' content='/ogimage.jpg' />
       </Head>
       <div className='w-1/2 gap-y-24 flex flex-col'>
         <p className='text-7xl  text-white'>Track your fitness progress and more. With Strongr</p>
