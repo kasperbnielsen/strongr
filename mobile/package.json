@@ -23,7 +23,7 @@
     "@tamagui/switch": "^1.101.5",
     "@types/react": "~18.2.14",
     "axios": "^1.7.2",
-    "expo": "^51.0.17",
+    "expo": "^51.0.24",
     "expo-constants": "~16.0.2",
     "expo-linking": "~6.3.1",
     "expo-router": "3.5.20",
