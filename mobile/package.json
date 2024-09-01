@@ -45,7 +45,7 @@
     "typescript": "^5.5.2"
   },
   "devDependencies": {
-    "@babel/core": "^7.24.7",
+    "@babel/core": "^7.25.2",
     "@babel/plugin-proposal-export-namespace-from": "^7.18.9",
     "@iconify/react": "^5.0.1",
     "@types/babel__core": "^7.20.5",
