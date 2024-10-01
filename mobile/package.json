@@ -18,7 +18,7 @@
     "@rneui/themed": "^4.0.0-rc.8",
     "@tamagui/config": "^1.101.5",
     "@tamagui/lucide-icons": "^1.101.7",
-    "@tamagui/polyfill-dev": "^1.101.7",
+    "@tamagui/polyfill-dev": "^1.112.8",
     "@tamagui/select": "^1.80.4",
     "@tamagui/switch": "^1.101.5",
     "@types/react": "~18.2.14",
